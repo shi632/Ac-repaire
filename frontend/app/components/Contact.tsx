@@ -13,6 +13,7 @@ export default function Contact() {
     email: "",
     phone: "",
     service: "",
+    address: "",
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
@@ -27,7 +28,7 @@ export default function Contact() {
       });
       if (response.ok) {
         setSubmitted(true);
-        setFormData({ name: "", email: "", phone: "", service: "", message: "" });
+        setFormData({ name: "", email: "", phone: "", service: "", address: "", message: "" });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -192,6 +193,20 @@ export default function Contact() {
                     <option value="emergency">Emergency Service</option>
                     <option value="duct">Duct Cleaning</option>
                   </select>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Service Address *
+                  </label>
+                  <textarea
+                    rows={2}
+                    required
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-200 outline-none transition-all resize-none"
+                    placeholder="Enter your full address (at least 5 characters)"
+                  />
                 </div>
 
                 <div className="mb-6">

@@ -4,34 +4,54 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Validate required fields
-    const { name, phone, service } = body;
-    if (!name || !phone || !service) {
+    // Validate required fields (including address)
+    const { name, phone, service, address, message } = body;
+    if (!name || !phone || !service || !address) {
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: "Missing required fields: name, phone, service, and address are required." },
         { status: 400 }
       );
     }
 
-    // Here you would typically:
-    // 1. Save to database
-    // 2. Send email notification
-    // 3. Send to your FastAPI backend
+    // Forward to FastAPI backend
+    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
     
-    // Example: Forward to FastAPI backend
-    // const response = await fetch('http://backend:8000/api/contact', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(body),
-    // });
+    const response = await fetch(`${backendUrl}/api/bookings`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify({
+        name,
+        phone,
+        service,
+        address,
+        message: message || ""
+      }),
+    });
 
+    if (!response.ok) {
+      let errorDetail = "Failed to submit booking to database server.";
+      try {
+        const errData = await response.json();
+        errorDetail = errData.detail || errorDetail;
+      } catch (e) {}
+      
+      return NextResponse.json(
+        { error: errorDetail },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
     return NextResponse.json(
-      { message: "Contact form submitted successfully" },
+      { message: "Booking created successfully", booking: data },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Error forwarding booking:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error: " + (error.message || error) },
       { status: 500 }
     );
   }

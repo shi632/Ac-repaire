@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session  # type: ignore
 from models import Booking
 from schemas import BookingCreate
 

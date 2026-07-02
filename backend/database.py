@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine  # type: ignore
+from sqlalchemy.ext.declarative import declarative_base  # type: ignore
+from sqlalchemy.orm import sessionmaker  # type: ignore
 import os
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ac_repair.db")

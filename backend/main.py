@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends, HTTPException  # type: ignore
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore
+from sqlalchemy.orm import Session  # type: ignore
 from contextlib import asynccontextmanager
 
 from database import engine, Base, get_db
@@ -42,7 +42,12 @@ app = FastAPI(
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure for production
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

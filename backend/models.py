@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
-from sqlalchemy.sql import func
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean  # type: ignore
+from sqlalchemy.sql import func  # type: ignore
 from database import Base
 
 class Booking(Base):
