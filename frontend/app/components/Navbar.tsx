@@ -119,10 +119,21 @@ export default function Navbar() {
           >
             <div className="container-custom py-6 space-y-3">
               {navLinks.map((link) => (
+                
                 <a
                   key={link.name}
                   href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) =>{e.preventDefault(); setIsMobileMenuOpen(false);
+                    setTimeout(() => {
+                    const section = document.querySelector(link.href);
+                    if (section) {
+                     section.scrollIntoView({
+                      behavior: "smooth",
+                     block: "start",
+                    });
+                    }
+                   }, 250);
+                  }}
                   className="block py-3 px-4 text-slate-800 hover:text-blue-600 hover:bg-blue-50/50 rounded-2xl font-semibold text-sm transition-all duration-200"
                 >
                   {link.name}

@@ -57,6 +57,7 @@ export default function About() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.12),transparent_50%)]" />
 
               {/* TOP */}
+              
               <div className="relative z-10 flex items-start justify-between">
                 <div className="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur">
                   <Snowflake className="h-7 w-7 text-cyan-400 animate-spin-slow sm:h-8 sm:w-8" />
