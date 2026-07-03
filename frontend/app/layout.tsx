@@ -45,7 +45,7 @@ export default function RootLayout({
               "name": "Expert AC Repair & Service",
               "description": "Professional AC repair, installation, and maintenance services",
               "url": "https://your-domain.com",
-              "telephone": "+91-XXXXXXXXXX",
+              "telephone": "+91-9389982912",
               "address": {
                 "@type": "PostalAddress",
                 "addressLocality": "Your City",
