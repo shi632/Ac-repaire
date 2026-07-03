@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: 'https://your-domain.com',
+    canonical: 'https://CoolAir.com',
   },
 }
 

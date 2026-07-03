@@ -104,3 +104,4 @@ def remove_booking(
     if not booking:
         raise HTTPException(status_code=404, detail="Booking not found")
     return {"message": "Booking deleted successfully"}
+

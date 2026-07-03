@@ -2,6 +2,10 @@ from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ac_repair.db")
 

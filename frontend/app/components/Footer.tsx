@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube, Snowflake } from "lucide-react";
+import { COMPANY_CONFIG } from "../config/constants";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -13,33 +14,39 @@ export default function Footer() {
   ];
 
   const services = [
-    "AC Repair",
-    "AC Maintenance",
+    "AC Repair Service",
     "AC Installation",
-    "Gas Refilling",
-    "Emergency Service",
-    "Duct Cleaning",
+    "AC Maintenance",
+    "AC Gas Filling",
+    "AC Uninstallation",
   ];
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-slate-950 text-slate-400 border-t border-slate-900">
       {/* Main Footer */}
       <div className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div>
-            <h3 className="text-2xl font-bold text-white mb-4">❄️ CoolAir</h3>
-            <p className="text-gray-400 mb-6 leading-relaxed">
-              Professional AC repair and maintenance services. Keeping you cool since 2014.
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-600 rounded-xl text-white">
+                <Snowflake className="w-5 h-5 animate-pulse-slow" />
+              </div>
+              <span className="font-extrabold text-white text-2xl tracking-tight leading-none">
+                {COMPANY_CONFIG.brandName}
+              </span>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Professional, certified HVAC technicians providing transparent, quick, and reliable air conditioning solutions since 2014.
             </p>
             <div className="flex gap-4">
               {[Facebook, Instagram, Twitter, Youtube].map((Icon, index) => (
                 <a
                   key={index}
                   href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-cyan-600 transition-colors"
+                  className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-blue-600 transition-colors"
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </a>
               ))}
             </div>
@@ -47,13 +54,13 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-semibold text-lg mb-4">Quick Links</h4>
-            <ul className="space-y-3">
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-wider mb-6">Quick Links</h4>
+            <ul className="space-y-3 text-sm">
               {quickLinks.map((link, index) => (
                 <li key={index}>
                   <Link
                     href={link.href}
-                    className="hover:text-cyan-400 transition-colors"
+                    className="hover:text-blue-500 transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -64,10 +71,10 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-white font-semibold text-lg mb-4">Our Services</h4>
-            <ul className="space-y-3">
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-wider mb-6">Our Services</h4>
+            <ul className="space-y-3 text-sm">
               {services.map((service, index) => (
-                <li key={index} className="hover:text-cyan-400 transition-colors cursor-pointer">
+                <li key={index} className="hover:text-blue-500 transition-colors cursor-pointer">
                   {service}
                 </li>
               ))}
@@ -76,22 +83,22 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-white font-semibold text-lg mb-4">Contact Info</h4>
-            <ul className="space-y-4">
+            <h4 className="text-white font-extrabold text-sm uppercase tracking-wider mb-6">Contact Info</h4>
+            <ul className="space-y-4 text-sm">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1" />
-                <span>123 Cooling Street, Tech City, TC 12345</span>
+                <MapPin className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                <span className="leading-relaxed">{COMPANY_CONFIG.address}</span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                <a href="tel:+1234567890" className="hover:text-cyan-400 transition-colors">
-                  (123) 456-7890
+                <Phone className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                <a href={`tel:${COMPANY_CONFIG.phoneRaw}`} className="hover:text-blue-500 transition-colors font-semibold">
+                  {COMPANY_CONFIG.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                <a href="mailto:info@acrepair.com" className="hover:text-cyan-400 transition-colors">
-                  info@acrepair.com
+                <Mail className="w-5 h-5 text-blue-500 flex-shrink-0" />
+                <a href={`mailto:${COMPANY_CONFIG.email}`} className="hover:text-blue-500 transition-colors">
+                  {COMPANY_CONFIG.email}
                 </a>
               </li>
             </ul>
@@ -100,14 +107,14 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-500">
-            © {currentYear} CoolAir AC Services. All rights reserved.
+      <div className="border-t border-slate-900/60 bg-slate-950">
+        <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-slate-500 text-center md:text-left">
+            © {currentYear} {COMPANY_CONFIG.name}. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm text-gray-500">
-            <a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-cyan-400 transition-colors">Terms of Service</a>
+          <div className="flex gap-6 text-xs text-slate-500">
+            <a href="#" className="hover:text-blue-500 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-blue-500 transition-colors">Terms of Service</a>
           </div>
         </div>
       </div>

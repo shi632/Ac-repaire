@@ -2,13 +2,17 @@ from fastapi import FastAPI, Depends, HTTPException  # type: ignore
 from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
 from contextlib import asynccontextmanager
+import os
+from dotenv import load_dotenv # type: ignore
+
+# Load environment variables
+load_dotenv()
 
 from database import engine, Base, get_db
 from models import Booking, AdminUser
 from schemas import BookingCreate, BookingResponse
 from crud import create_booking
 from admin_routes import router as admin_router
-import os
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -16,12 +20,15 @@ Base.metadata.create_all(bind=engine)
 # Seed admin user
 def seed_admin():
     db = Session(bind=engine)
-    admin = db.query(AdminUser).filter(AdminUser.username == "admin").first()
+    admin_user = os.getenv("ADMIN_USERNAME", "admin")
+    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+    
+    admin = db.query(AdminUser).filter(AdminUser.username == admin_user).first()
     if not admin:
         from admin_routes import get_password_hash
         admin = AdminUser(
-            username="admin",
-            hashed_password=get_password_hash("admin123")  # Change in production!
+            username=admin_user,
+            hashed_password=get_password_hash(admin_password)
         )
         db.add(admin)
         db.commit()
@@ -55,6 +62,15 @@ app.add_middleware(
 
 # Include admin routes
 app.include_router(admin_router)
+
+@app.get("/")
+def root():
+    return {
+        "message": "Welcome to AC Repair Service API",
+        "status": "Running",
+        "docs": "/docs",
+        "health": "/api/health"
+    }
 
 @app.post("/api/bookings", response_model=BookingResponse)
 def submit_booking(booking: BookingCreate, db: Session = Depends(get_db)):

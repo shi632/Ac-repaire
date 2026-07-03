@@ -10,7 +10,7 @@ export default function Justdial() {
   const justdialUrl = 'https://jsdl.in/DT-19GQMT2BJCA'
 
   return (
-    <section className="section-padding bg-primary-900 text-white" ref={ref}>
+    <section className="section-padding bg-primary-900 text-black" ref={ref}>
       <div className="container-custom">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -29,7 +29,7 @@ export default function Justdial() {
               <span className="text-accent-light">Justdial</span>
             </h2>
 
-            <p className="text-lg text-white/80 mb-8">
+            <p className="text-lg text-black/80 mb-8">
               We are a verified and highly-rated business on Justdial. Our customers trust us for reliable AC repair and maintenance services. Check out our profile and reviews.
             </p>
 
@@ -38,17 +38,17 @@ export default function Justdial() {
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                 <Star className="w-8 h-8 text-yellow-400 fill-yellow-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold">4.8</p>
-                <p className="text-sm text-white/70">Rating</p>
+                <p className="text-sm text-black/70">Rating</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                 <ThumbsUp className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <p className="text-2xl font-bold">200+</p>
-                <p className="text-sm text-white/70">Reviews</p>
+                <p className="text-2xl  text-black font-bold">200+</p>
+                <p className="text-sm text-black/70">Reviews</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
                 <MessageSquare className="w-8 h-8 text-accent-light mx-auto mb-2" />
                 <p className="text-2xl font-bold">50+</p>
-                <p className="text-sm text-white/70">Testimonials</p>
+                <p className="text-sm text-black/70">Testimonials</p>
               </div>
             </div>
 
@@ -91,11 +91,11 @@ export default function Justdial() {
                     ))}
                   </div>
                 </div>
-                <p className="text-white/80 text-sm">"{review.text}"</p>
+                <p className="text-black/80 text-sm">"{review.text}"</p>
               </motion.div>
             ))}
 
-            <p className="text-center text-white/60 text-sm mt-4">
+            <p className="text-center text-black/60 text-sm mt-4">
               Verified reviews from Justdial platform
             </p>
           </motion.div>

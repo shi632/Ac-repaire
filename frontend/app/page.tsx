@@ -5,6 +5,7 @@ import Services from "./components/Services";
 import WhyChooseUs from "./components/WhyChooseUs";
 import Testimonials from "./components/Testimonials";
 import Gallery from "./components/Gallery";
+import Faq from "./components/Faq";
 import Contact from "./components/Contact";
 import Justdial from "./components/Justdial";
 import Footer from "./components/Footer";
@@ -20,6 +21,7 @@ export default function Home() {
       <WhyChooseUs />
       <Testimonials />
       <Gallery />
+      <Faq />
       <Contact />
       <Justdial />
       <Footer />

@@ -1,177 +1,215 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Phone, Calendar, MessageCircle, Star, Clock, MapPin, CheckCircle } from 'lucide-react'
+import { Phone, Calendar, MessageCircle, Star, Clock, MapPin, CheckCircle, ShieldCheck } from 'lucide-react'
+import { COMPANY_CONFIG } from '../config/constants'
 
 export default function Hero() {
-  const phoneNumber = '+91-XXXXXXXXXX'
-  const whatsappNumber = '+91XXXXXXXXXX'
-  const whatsappMessage = encodeURIComponent('Hi, I need AC repair service. Please contact me.')
+  const whatsappMessage = encodeURIComponent(COMPANY_CONFIG.whatsappMessage)
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent rounded-full blur-3xl" />
+    <section id="home" className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-white pt-24 pb-16">
+      {/* Premium Background Mesh */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-cyan-500/10 rounded-full blur-[140px]" />
+        <div className="absolute top-[30%] left-[20%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px]" />
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30" />
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(5)].map((_, i) => (
+      {/* Floating Sparkles/Bubbles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-4 h-4 bg-white/20 rounded-full"
+            className="absolute w-3 h-3 bg-cyan-400/20 rounded-full"
             animate={{
-              y: [0, -30, 0],
-              opacity: [0.2, 0.5, 0.2],
+              y: [0, -40, 0],
+              x: [0, Math.sin(i) * 20, 0],
+              opacity: [0.1, 0.4, 0.1],
+              scale: [1, 1.2, 1]
             }}
             transition={{
-              duration: 3 + i,
+              duration: 4 + i,
               repeat: Infinity,
-              delay: i * 0.5,
+              delay: i * 0.7,
+              ease: "easeInOut"
             }}
             style={{
-              left: `${15 + i * 20}%`,
-              top: `${20 + i * 15}%`,
+              left: `${10 + i * 16}%`,
+              top: `${30 + i * 10}%`,
             }}
           />
         ))}
       </div>
 
-      <div className="container-custom relative z-10 pt-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
+      <div className="container-custom relative z-10 w-full">
+        <div className="grid lg:grid-cols-12 gap-12 items-center">
+          {/* Content Left Side */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            className="lg:col-span-7 text-left space-y-6"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-6">
-              <Clock className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 bg-blue-500/10 border border-blue-500/20 backdrop-blur-md rounded-2xl text-blue-400 text-xs font-bold uppercase tracking-wider">
+              <Clock className="w-4 h-4 animate-spin-slow" />
               <span>Same Day Service Available</span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Expert AC Repair & Service{' '}
-              <span className="text-accent-light">at Your Doorstep</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-tight">
+              Premium AC Services <br />
+              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent">
+                At Your Doorstep
+              </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/80 mb-8 max-w-xl">
-              Fast, reliable, and affordable AC repair, installation, and maintenance services by experienced technicians.
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl">
+              Professional, certified technicians providing reliable repairs, precision installations, and comprehensive maintenance solutions. 100% satisfaction guaranteed.
             </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            {/* CTA Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <a
-                href={`tel:${phoneNumber}`}
-                className="btn-primary flex items-center justify-center gap-2 text-lg"
+                href={`tel:${COMPANY_CONFIG.phoneRaw}`}
+                className="flex items-center justify-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold rounded-2xl shadow-lg shadow-blue-500/25 transition-all text-sm"
               >
-                <Phone className="w-5 h-5" />
-                Call Now
+                <Phone className="w-3 h-3" />
+                <span>Call Now</span>
               </a>
               <a
                 href="#contact"
-                className="btn-secondary flex items-center justify-center gap-2 text-lg"
+                className="flex items-center justify-center gap-2 px-5 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 active:scale-[0.98] text-white font-bold rounded-2xl transition-all text-sm"
               >
-                <Calendar className="w-5 h-5" />
-                Book Service
+                <Calendar className="w-3 h-3" />
+                <span>Book Service</span>
               </a>
               <a
-                href={`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`}
+                href={`https://wa.me/${COMPANY_CONFIG.whatsapp}?text=${whatsappMessage}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-whatsapp flex items-center justify-center gap-2 text-lg"
+                className="flex items-center justify-center gap-2 px-5 py-2 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-bold rounded-2xl shadow-lg shadow-emerald-500/25 transition-all text-sm"
               >
-                <MessageCircle className="w-5 h-5" />
-                WhatsApp Us
+                <MessageCircle className="w-3 h-3" />
+                <span>WhatsApp</span>
               </a>
             </div>
 
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                <span className="text-white font-semibold">4.9 Rating</span>
+            {/* Quick trust metrics */}
+            <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-900 max-w-lg">
+              <div className="flex flex-col">
+                <span className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-1">
+                  {COMPANY_CONFIG.rating} <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 inline" />
+                </span>
+                <span className="text-xs text-slate-400 mt-1">Average Rating</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-white font-semibold">5000+ Services</span>
+              <div className="flex flex-col">
+                <span className="text-2xl sm:text-3xl font-extrabold text-white">
+                  {COMPANY_CONFIG.completedServices}
+                </span>
+                <span className="text-xs text-slate-400 mt-1">Jobs Completed</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <MapPin className="w-5 h-5 text-accent-light" />
-                <span className="text-white font-semibold">Local Service</span>
+              <div className="flex flex-col">
+                <span className="text-2xl sm:text-3xl font-extrabold text-white">
+                  {COMPANY_CONFIG.experienceYears}
+                </span>
+                <span className="text-xs text-slate-400 mt-1">Years Experience</span>
               </div>
             </div>
           </motion.div>
 
-          {/* Hero Image/Illustration */}
+          {/* Right Side Illustration */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative hidden lg:block"
+            className="lg:col-span-5 relative hidden lg:block"
           >
-            <div className="relative">
-              {/* Main Image Placeholder - Replace with actual technician image */}
-              <div className="relative bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-                <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary-400/30 to-accent/30 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-32 h-32 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-4">
-                      <svg className="w-20 h-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                      </svg>
-                    </div>
-                    <p className="text-white font-semibold text-lg">Professional AC Technician</p>
-                    <p className="text-white/60 text-sm">Ready to serve you</p>
+            {/* Visual Glass Box */}
+            <div className="relative p-8 bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl">
+              {/* Cool air effect visualization */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-teal-400 opacity-60" />
+
+              <div className="space-y-6">
+                {/* Tech card header */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Dispatch</span>
+                  </div>
+                  <span className="text-[11px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">Navi Mumbai</span>
+                </div>
+
+                {/* Main illustration graphics */}
+                <div className="py-8 text-center flex flex-col items-center">
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4 animate-float">
+                    <ShieldCheck className="w-12 h-12 text-white" />
+                  </div>
+                  <p className="font-extrabold text-lg text-white">Certified Technicians</p>
+                  <p className="text-xs text-slate-400 mt-1">Background checked & insured pros</p>
+                </div>
+
+                {/* Bottom detail stats */}
+                <div className="p-4 bg-slate-950/60 rounded-2xl border border-slate-900 space-y-3">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-400">Response Guarantee</span>
+                    <span className="font-bold text-cyan-400">Within 60 Mins</span>
+                  </div>
+                  <div className="h-px bg-slate-900" />
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-slate-400">Service Coverage Warranty</span>
+                    <span className="font-bold text-teal-400">30-Day Free Cover</span>
                   </div>
                 </div>
               </div>
-
-              {/* Floating Stats Card */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-secondary-800">98%</p>
-                    <p className="text-sm text-secondary-500">Satisfaction Rate</p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Floating Availability Card */}
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-2xl p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-primary-600" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-secondary-800">24/7 Available</p>
-                    <p className="text-xs text-secondary-500">Emergency Service</p>
-                  </div>
-                </div>
-              </motion.div>
             </div>
+
+            {/* Float badge 1 */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-6 -left-6 bg-white text-slate-950 p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100"
+            >
+              <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+                <CheckCircle className="w-3 h-3" />
+              </div>
+              <div>
+                <p className="text-sm font-black leading-none">100% Genuine</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">OEM Spare Parts Used</p>
+              </div>
+            </motion.div>
+
+            {/* Float badge 2 */}
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -top-6 -right-6 bg-white text-slate-950 p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100"
+            >
+              <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600">
+                <Clock className="w-3 h-3" />
+              </div>
+              <div>
+                <p className="text-sm font-black leading-none">24/7 Support</p>
+                <p className="text-[10px] text-slate-500 mt-0.5">Always there to assist</p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
 
-      {/* Bottom Wave */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Decorative Wave Bottom */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none overflow-hidden h-16 w-full">
+        <svg
+          viewBox="0 0 1440 120"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-full h-full min-w-[1440px]"
+          preserveAspectRatio="none"
+        >
           <path
             d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z"
-            fill="white"
+            fill="#ffffff"
           />
         </svg>
       </div>
