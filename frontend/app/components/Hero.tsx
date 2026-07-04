@@ -138,7 +138,7 @@ export default function Hero() {
                     <div className="w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse" />
                     <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active Dispatch</span>
                   </div>
-                  <span className="text-[11px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">Navi Mumbai</span>
+                  <span className="text-[11px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">Mohali</span>
                 </div>
 
                 {/* Main illustration graphics */}

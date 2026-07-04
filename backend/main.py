@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
 from contextlib import asynccontextmanager
 import os
-from dotenv import load_dotenv # type: ignore
+from dotenv import load_dotenv #type: ignore
 
 # Load environment variables
 load_dotenv()
