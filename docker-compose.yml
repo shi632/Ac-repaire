@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - BACKEND_URL=http://backend:8000
     depends_on:
       - backend
     networks:
@@ -17,8 +18,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=sqlite:///./ac_repair.db
-      - ADMIN_SECRET_KEY=your-secret-key-here
+      - DATABASE_URL=sqlite:////app/data/ac_repair.db
+      - SECRET_KEY=your-secret-key-here
+      - ADMIN_USERNAME=Shivam
+      - ADMIN_PASSWORD=Shivam5001
     volumes:
       - ./backend/data:/app/data
     networks:

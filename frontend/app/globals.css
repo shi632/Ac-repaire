@@ -53,3 +53,317 @@
     animation-delay: 600ms;
   }
 }
+
+/* ==========================================================================
+   Dark Mode & Themes Stylesheet
+   ========================================================================== */
+
+/* Dark Mode support */
+html.dark body {
+  background-color: #0b0f19 !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0b0f19 !important;
+}
+
+html.dark .bg-slate-50\/40 {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+}
+
+html.dark .bg-slate-50\/50 {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+}
+
+html.dark .bg-slate-50\/80 {
+  background-color: rgba(15, 23, 42, 0.8) !important;
+}
+
+html.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+html.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+html.dark .border-slate-150 {
+  border-color: #1e293b !important;
+}
+
+html.dark .border-slate-200\/50 {
+  border-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+html.dark .border-slate-200 {
+  border-color: #1e293b !important;
+}
+
+html.dark .bg-blue-50 {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+html.dark .bg-blue-50\/10 {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+html.dark .bg-indigo-50\/50 {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+html.dark .bg-teal-50 {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+html.dark .bg-cyan-50 {
+  background-color: rgba(30, 41, 59, 0.4) !important;
+}
+
+html.dark .bg-blue-50\/80 {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+}
+
+html.dark .text-blue-700 {
+  color: #38bdf8 !important;
+}
+
+html.dark .text-blue-600 {
+  color: #38bdf8 !important;
+}
+
+html.dark .text-blue-200 {
+  color: #7dd3fc !important;
+}
+
+html.dark .bg-slate-50.border-slate-150 {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+html.dark .fill-white-wave {
+  fill: #0b0f19 !important;
+}
+
+/* Theme Emerald */
+html.theme-emerald {
+  --theme-primary: #059669;
+  --theme-primary-hover: #047857;
+  --theme-accent: #10b981;
+}
+html.theme-emerald .bg-blue-600 {
+  background-color: var(--theme-primary) !important;
+}
+html.theme-emerald .hover\:bg-blue-700:hover {
+  background-color: var(--theme-primary-hover) !important;
+}
+html.theme-emerald .hover\:bg-blue-500:hover {
+  background-color: var(--theme-accent) !important;
+}
+html.theme-emerald .text-blue-600 {
+  color: var(--theme-primary) !important;
+}
+html.theme-emerald .text-blue-700 {
+  color: var(--theme-primary-hover) !important;
+}
+html.theme-emerald .text-blue-400 {
+  color: #34d399 !important;
+}
+html.theme-emerald .text-blue-200 {
+  color: #a7f3d0 !important;
+}
+html.theme-emerald .bg-blue-50 {
+  background-color: #ecfdf5 !important;
+}
+html.dark.theme-emerald .bg-blue-50 {
+  background-color: rgba(6, 78, 59, 0.4) !important;
+}
+html.theme-emerald .border-blue-500\/20 {
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+html.theme-emerald .bg-blue-500\/10 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+html.theme-emerald .from-blue-600 {
+  --tw-gradient-from: #059669 !important;
+  --tw-gradient-to: #10b981 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+html.theme-emerald .to-cyan-500 {
+  --tw-gradient-to: #10b981 !important;
+}
+html.theme-emerald .from-blue-500 {
+  --tw-gradient-from: #10b981 !important;
+}
+html.theme-emerald .to-indigo-500 {
+  --tw-gradient-to: #047857 !important;
+}
+html.theme-emerald .from-blue-400 {
+  --tw-gradient-from: #34d399 !important;
+}
+html.theme-emerald .via-cyan-400 {
+  --tw-gradient-stops: #34d399, #059669 !important;
+}
+html.theme-emerald .to-teal-400 {
+  --tw-gradient-to: #10b981 !important;
+}
+html.theme-emerald .shadow-blue-500\/20 {
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2) !important;
+}
+html.theme-emerald .shadow-blue-500\/25 {
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.25) !important;
+}
+
+/* Theme Sunset Rose */
+html.theme-rose {
+  --theme-primary: #e11d48;
+  --theme-primary-hover: #be185d;
+  --theme-accent: #f97316;
+}
+html.theme-rose .bg-blue-600 {
+  background-color: var(--theme-primary) !important;
+}
+html.theme-rose .hover\:bg-blue-700:hover {
+  background-color: var(--theme-primary-hover) !important;
+}
+html.theme-rose .hover\:bg-blue-500:hover {
+  background-color: var(--theme-accent) !important;
+}
+html.theme-rose .text-blue-600 {
+  color: var(--theme-primary) !important;
+}
+html.theme-rose .text-blue-700 {
+  color: var(--theme-primary-hover) !important;
+}
+html.theme-rose .text-blue-400 {
+  color: #fb7185 !important;
+}
+html.theme-rose .text-blue-200 {
+  color: #fecdd3 !important;
+}
+html.theme-rose .bg-blue-50 {
+  background-color: #fff1f2 !important;
+}
+html.dark.theme-rose .bg-blue-50 {
+  background-color: rgba(136, 19, 55, 0.4) !important;
+}
+html.theme-rose .border-blue-500\/20 {
+  border-color: rgba(225, 29, 72, 0.2) !important;
+}
+html.theme-rose .bg-blue-500\/10 {
+  background-color: rgba(225, 29, 72, 0.1) !important;
+}
+html.theme-rose .from-blue-600 {
+  --tw-gradient-from: #e11d48 !important;
+  --tw-gradient-to: #f97316 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+html.theme-rose .to-cyan-500 {
+  --tw-gradient-to: #f97316 !important;
+}
+html.theme-rose .from-blue-500 {
+  --tw-gradient-from: #e11d48 !important;
+}
+html.theme-rose .to-indigo-500 {
+  --tw-gradient-to: #9f1239 !important;
+}
+html.theme-rose .from-blue-400 {
+  --tw-gradient-from: #fb7185 !important;
+}
+html.theme-rose .via-cyan-400 {
+  --tw-gradient-stops: #fb7185, #e11d48 !important;
+}
+html.theme-rose .to-teal-400 {
+  --tw-gradient-to: #f97316 !important;
+}
+html.theme-rose .shadow-blue-500\/20 {
+  box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.2) !important;
+}
+html.theme-rose .shadow-blue-500\/25 {
+  box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.25) !important;
+}
+
+/* Theme Cyber Purple */
+html.theme-cyber {
+  --theme-primary: #8b5cf6;
+  --theme-primary-hover: #7c3aed;
+  --theme-accent: #06b6d4;
+}
+html.theme-cyber .bg-blue-600 {
+  background-color: var(--theme-primary) !important;
+}
+html.theme-cyber .hover\:bg-blue-700:hover {
+  background-color: var(--theme-primary-hover) !important;
+}
+html.theme-cyber .hover\:bg-blue-500:hover {
+  background-color: var(--theme-accent) !important;
+}
+html.theme-cyber .text-blue-600 {
+  color: var(--theme-primary) !important;
+}
+html.theme-cyber .text-blue-700 {
+  color: var(--theme-primary-hover) !important;
+}
+html.theme-cyber .text-blue-400 {
+  color: #c084fc !important;
+}
+html.theme-cyber .text-blue-200 {
+  color: #e9d5ff !important;
+}
+html.theme-cyber .bg-blue-50 {
+  background-color: #f5f3ff !important;
+}
+html.dark.theme-cyber .bg-blue-50 {
+  background-color: rgba(91, 33, 182, 0.4) !important;
+}
+html.theme-cyber .border-blue-500\/20 {
+  border-color: rgba(139, 92, 246, 0.2) !important;
+}
+html.theme-cyber .bg-blue-500\/10 {
+  background-color: rgba(139, 92, 246, 0.1) !important;
+}
+html.theme-cyber .from-blue-600 {
+  --tw-gradient-from: #8b5cf6 !important;
+  --tw-gradient-to: #06b6d4 !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+html.theme-cyber .to-cyan-500 {
+  --tw-gradient-to: #06b6d4 !important;
+}
+html.theme-cyber .from-blue-500 {
+  --tw-gradient-from: #8b5cf6 !important;
+}
+html.theme-cyber .to-indigo-500 {
+  --tw-gradient-to: #5b21b6 !important;
+}
+html.theme-cyber .from-blue-400 {
+  --tw-gradient-from: #c084fc !important;
+}
+html.theme-cyber .via-cyan-400 {
+  --tw-gradient-stops: #c084fc, #8b5cf6 !important;
+}
+html.theme-cyber .to-teal-400 {
+  --tw-gradient-to: #06b6d4 !important;
+}
+html.theme-cyber .shadow-blue-500\/20 {
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.2) !important;
+}
+html.theme-cyber .shadow-blue-500\/25 {
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.25) !important;
+}

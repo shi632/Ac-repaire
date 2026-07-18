@@ -1,0 +1,33 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+backend/__pycache__/
+backend/*/__pycache__/
+
+# Databases
+*.db
+*.sqlite3
+backend/ac_repair.db
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Frontend dependencies and builds
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+
+# Local environment files
+frontend/.env*.local
+.env*.local
+
+# IDEs and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

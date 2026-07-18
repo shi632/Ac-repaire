@@ -20,12 +20,14 @@ Base.metadata.create_all(bind=engine)
 # Seed admin user
 def seed_admin():
     db = Session(bind=engine)
-    admin_user = os.getenv("ADMIN_USERNAME", "admin")
-    admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
+    admin_user = os.getenv("ADMIN_USERNAME", "Shivam")
+    admin_password = os.getenv("ADMIN_PASSWORD", "Shivam5001")
     
     admin = db.query(AdminUser).filter(AdminUser.username == admin_user).first()
     if not admin:
         from admin_routes import get_password_hash
+        # Delete previous default admin user if it exists
+        db.query(AdminUser).filter(AdminUser.username == "admin").delete()
         admin = AdminUser(
             username=admin_user,
             hashed_password=get_password_hash(admin_password)

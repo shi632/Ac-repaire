@@ -137,13 +137,13 @@ export default function About() {
               </span>
             </h2>
 
-            <p className="text-sm sm:text-base lg:text-lg leading-7 lg:leading-8 text-slate-600">
+            <p className="text-sm sm:text-base lg:text-lg leading-7 text-slate-600">
               At {COMPANY_CONFIG.name}, we provide top-tier residential and
               commercial air-conditioning services with experienced technicians,
               genuine spare parts, and transparent pricing.
             </p>
 
-            <p className="text-sm sm:text-base leading-7 text-slate-600">
+            <p className="text-sm sm:text-base lg:text-lg leading-7 text-slate-600">
               From installation and gas refilling to repair and preventive
               maintenance, we ensure fast response, quality workmanship, and
               complete customer satisfaction.

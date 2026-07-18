@@ -139,13 +139,13 @@ export default function Contact() {
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col justify-between space-y-8"
+            className="flex flex-col gap-6"
           >
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-5">
               {contactInfo.map((info, index) => (
                 <div
                   key={index}
-                  className="bg-slate-50 border border-slate-100 rounded-3xl p-6 hover:bg-blue-50/40 hover:border-blue-100 transition-all duration-300 group"
+                  className="bg-slate-50 border border-slate-100 rounded-2xl p-5 min-h-[160px] hover:bg-blue-50/40 hover:border-blue-100 transition-all duration-300 group"
                 >
                   <div className="text-blue-600 mb-4 bg-white shadow-sm border border-slate-100 w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">{info.icon}</div>
                   <h3 className="font-extrabold text-slate-900 mb-1 text-base">{info.title}</h3>
@@ -161,7 +161,7 @@ export default function Contact() {
             </div>
 
             {/* Google Map Integration */}
-            <div className="bg-slate-50 border border-slate-150 rounded-3xl overflow-hidden h-72 relative shadow-inner">
+           <div className="bg-slate-50 border border-slate-150 rounded-3xl overflow-hidden  h-56 lg:h- relative shadow-inner">
               <iframe
                 title="Service Area Map"
                 src={COMPANY_CONFIG.mapEmbedUrl}
@@ -203,7 +203,7 @@ export default function Contact() {
                 </button>
               </motion.div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-150 rounded-[32px] p-8 sm:p-10 shadow-lg flex flex-col justify-between h-full">
+              <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-150 rounded-[32px] p-8 sm:p-10 shadow-lg flex flex-col ">
                 <div className="space-y-5">
                   <h3 className="text-xl font-black text-slate-900 border-b border-slate-100 pb-3 mb-2">Request Service</h3>
 
@@ -308,7 +308,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 active:scale-[0.99] cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed"
+                  className="w-full mt-5 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 active:scale-[0.99] cursor-pointer disabled:bg-blue-400 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
