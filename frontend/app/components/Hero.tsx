@@ -141,13 +141,17 @@ export default function Hero() {
                   <span className="text-[11px] font-bold px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full">Mohali</span>
                 </div>
 
-                {/* Main illustration graphics */}
-                <div className="py-8 text-center flex flex-col items-center">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/20 mb-4 animate-float">
-                    <ShieldCheck className="w-12 h-12 text-white" />
+                {/* Main illustration graphics with Real Image */}
+                <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full border border-slate-800/80 mb-6 group">
+                  <img
+                    src="/images/hero.png"
+                    alt="AC Technician Servicing Unit"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex flex-col justify-end p-5">
+                    <p className="font-extrabold text-base text-white">Certified Technicians</p>
+                    <p className="text-xs text-slate-300 mt-0.5">Background checked & insured pros</p>
                   </div>
-                  <p className="font-extrabold text-lg text-white">Certified Technicians</p>
-                  <p className="text-xs text-slate-400 mt-1">Background checked & insured pros</p>
                 </div>
 
                 {/* Bottom detail stats */}

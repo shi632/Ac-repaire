@@ -51,13 +51,17 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="relative"
           >
-            <div className="relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-4 sm:p-6 lg:p-8 shadow-2xl">
-
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(59,130,246,0.12),transparent_50%)]" />
+            <div className="relative flex aspect-[4/3] flex-col justify-between overflow-hidden rounded-3xl bg-slate-900 shadow-2xl group">
+              {/* Background Image */}
+              <img
+                src="/images/about.png"
+                alt="About CoolAir Technicians"
+                className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-900/20" />
 
               {/* TOP */}
-              
-              <div className="relative z-10 flex items-start justify-between">
+              <div className="relative z-10 flex items-start justify-between p-4 sm:p-6 lg:p-8 pb-0">
                 <div className="rounded-xl sm:rounded-2xl border border-white/10 bg-white/10 p-2.5 sm:p-3 backdrop-blur">
                   <Snowflake className="h-6 w-6 sm:h-8 sm:w-8 text-cyan-400 animate-spin-slow" />
                 </div>
@@ -68,7 +72,7 @@ export default function About() {
               </div>
 
               {/* CENTER */}
-              <div className="relative z-10 py-4 text-center sm:py-8">
+              <div className="relative z-10 py-4 text-center sm:py-6 p-4 sm:p-6 lg:p-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 shadow-lg shadow-blue-500/30 sm:h-20 sm:w-20">
                   <Shield className="h-8 w-8 text-white sm:h-10 sm:w-10" />
                 </div>
@@ -77,15 +81,17 @@ export default function About() {
                   Full Service Support
                 </h3>
 
-                <p className="mt-2 text-xs text-slate-400 sm:text-sm">
+                <p className="mt-2 text-xs text-slate-200 sm:text-sm font-medium">
                   Mohali & Chandigarh
                 </p>
               </div>
 
               {/* BOTTOM */}
-             <p className="relative z-10 text-[11px] sm:text-xs text-slate-400">
-                Established since 2014 • Certified HVAC Technicians
-              </p>
+              <div className="relative z-10 p-4 sm:p-6 lg:p-8 pt-0">
+                <p className="text-[11px] sm:text-xs text-slate-300 font-medium">
+                  Established since 2014 • Certified HVAC Technicians
+                </p>
+              </div>
             </div>
 
             {/* Desktop Floating Badge */}

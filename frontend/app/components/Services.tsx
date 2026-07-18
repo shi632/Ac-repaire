@@ -33,6 +33,7 @@ const services = [
     ],
     color: 'from-blue-500 to-cyan-500',
     bgColor: 'bg-blue-50',
+    price: '₹349',
   },
   {
     icon: Settings,
@@ -45,6 +46,7 @@ const services = [
     ],
     color: 'from-blue-600 to-indigo-500',
     bgColor: 'bg-indigo-50/50',
+    price: '₹1,199',
   },
   {
     icon: ClipboardCheck,
@@ -57,6 +59,7 @@ const services = [
     ],
     color: 'from-teal-500 to-emerald-500',
     bgColor: 'bg-teal-50',
+    price: '₹499',
   },
   {
     icon: Wind,
@@ -68,6 +71,7 @@ const services = [
     ],
     color: 'from-cyan-500 to-teal-500',
     bgColor: 'bg-cyan-50',
+    price: '₹1,999',
   },
   {
     icon: ArrowRightLeft,
@@ -79,6 +83,7 @@ const services = [
     ],
     color: 'from-indigo-500 to-blue-500',
     bgColor: 'bg-blue-50/80',
+    price: '₹599',
   },
 ]
 
@@ -137,6 +142,7 @@ export default function Services() {
                 features={service.features}
                 color={service.color}
                 bgColor={service.bgColor}
+                price={service.price}
                 onBook={handleBookService}
               />
             </motion.div>

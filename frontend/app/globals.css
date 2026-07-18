@@ -5,10 +5,14 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
   
   body {
     @apply bg-white text-secondary-800 antialiased;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 }
 

@@ -26,7 +26,11 @@ export async function POST(request: NextRequest) {
         phone,
         service,
         address,
-        message: message || ""
+        message: message || "",
+        price: body.price,
+        coupon_code: body.coupon_code,
+        discount_applied: body.discount_applied,
+        payment_status: body.payment_status
       }),
     });
 

@@ -10,42 +10,48 @@ const galleryItems = [
     category: 'Repair',
     description: 'Technician checking pressure levels and circuit board parameters.',
     gradient: 'from-blue-600 to-cyan-500',
-    icon: Snowflake
+    icon: Snowflake,
+    image: '/images/hero.png'
   },
   {
     title: 'Flawless Split AC Installation',
     category: 'Installation',
     description: 'Sleek wall mounting and pipeline concealment setups.',
     gradient: 'from-indigo-600 to-blue-500',
-    icon: Fan
+    icon: Fan,
+    image: '/images/install.png'
   },
   {
     title: 'Jet Pump Coil Deep Clean',
     category: 'Maintenance',
     description: 'High-pressure water washing for indoor unit evaporator coils.',
     gradient: 'from-teal-600 to-cyan-500',
-    icon: Sparkles
+    icon: Sparkles,
+    image: '/images/clean.png'
   },
   {
     title: 'Eco-Friendly Gas Refill',
     category: 'Gas Filling',
     description: 'Recharging systems with premium, high-cooling refrigerants.',
     gradient: 'from-cyan-600 to-teal-500',
-    icon: Droplets
+    icon: Droplets,
+    image: '/images/about.png'
   },
   {
     title: 'Condenser Unit Descaling',
     category: 'Maintenance',
     description: 'Clearing dirt and grime from the outdoor compressor unit.',
     gradient: 'from-blue-500 to-indigo-600',
-    icon: ShieldCheck
+    icon: ShieldCheck,
+    image: '/images/install.png'
   },
   {
     title: 'Multi-Point Safety Audit',
     category: 'Inspection',
     description: 'Electrical load test and wire isolation checks.',
     gradient: 'from-slate-800 to-slate-900',
-    icon: Camera
+    icon: Camera,
+    image: '/images/hero.png'
   },
 ]
 
@@ -89,20 +95,32 @@ export default function Gallery() {
                 transition={{ duration: 0.5, delay: index * 0.08 }}
                 className="group relative rounded-3xl overflow-hidden bg-slate-950 aspect-[4/3] cursor-pointer shadow-md hover:shadow-2xl border border-slate-100 hover:border-transparent transition-all duration-500"
               >
-                {/* Visual Gradient Background Mockup */}
-                <div className={`absolute inset-0 bg-gradient-to-tr ${item.gradient} opacity-90 transition-transform duration-700 group-hover:scale-110 flex items-center justify-center p-8`}>
+                {/* Visual Background: Image or Gradient */}
+                <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
+                  {item.image ? (
+                    <>
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-slate-950/70 group-hover:bg-slate-950/65 transition-colors duration-300" />
+                    </>
+                  ) : (
+                    <div className={`absolute inset-0 bg-gradient-to-tr ${item.gradient} opacity-95`} />
+                  )}
                   {/* Subtle decorative mesh overlay */}
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.15),transparent_70%)]" />
-                  
-                  {/* Visual Art inside the box */}
-                  <div className="text-center z-10 flex flex-col items-center">
-                    <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 text-white mb-3 shadow-lg group-hover:rotate-12 transition-transform duration-500">
-                      <Icon className="w-10 h-10 text-white" />
-                    </div>
-                    <span className="text-[10px] font-bold tracking-widest text-white/70 uppercase">
-                      {item.category}
-                    </span>
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1),transparent_70%)]" />
+                </div>
+                
+                {/* Visual Art inside the box */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-8 z-10 group-hover:scale-75 group-hover:opacity-0 transition-all duration-300">
+                  <div className="w-20 h-20 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 text-white mb-3 shadow-lg group-hover:rotate-12 transition-transform duration-500">
+                    <Icon className="w-10 h-10 text-white" />
                   </div>
+                  <span className="text-[10px] font-bold tracking-widest text-white/70 uppercase">
+                    {item.category}
+                  </span>
                 </div>
 
                 {/* Dark gradient overlay bottom */}

@@ -1,19 +1,19 @@
 export const COMPANY_CONFIG = {
   name: "CoolAir AC Services",
   brandName: "CoolAir",
-  phone: "+91 98765 43210",
-  phoneRaw: "+919876543210",
-  whatsapp: "+919876543210",
+  phone: "+91 93899 82912",
+  phoneRaw: "+919389982912",
+  whatsapp: "+919389982912",
   whatsappMessage: "Hi CoolAir, I would like to book an AC service.",
-  email: "support@coolairservices.com",
-  address: "Shop 12, Sunrise Arcade, Sector 11, CBD Belapur, Navi Mumbai, MH 400614",
+  email: "shivamsharma97005@gmail.com",
+  address: "Mohali, Chandigarh, Punjab",
   workingHours: "Mon-Sat: 8:00 AM - 8:00 PM | Sun: 9:00 AM - 6:00 PM",
   rating: "4.9",
   reviewsCount: "1,250+",
   experienceYears: "15+",
   completedServices: "10,000+",
   justdialUrl: "https://jsdl.in/DT-19GQMT2BJCA",
-  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.803920959954!2d73.03357597587841!3d19.028359053528246!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3db5aa62955%3A0xe5566cfd4a0a7d5b!2sCBD%20Belapur%2C%20Navi%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+  mapEmbedUrl: "https://maps.google.com/maps?q=Mohali,Chandigarh,Punjab&t=&z=13&ie=UTF8&iwloc=&output=embed",
 };
 
 export const FAQS = [
@@ -27,7 +27,7 @@ export const FAQS = [
   },
   {
     question: "Do you offer emergency or same-day AC repair services?",
-    answer: "Yes! We offer same-day repair services across Belapur and Navi Mumbai. If your AC breaks down unexpectedly, you can call us directly or use our WhatsApp line to schedule an emergency technician.",
+    answer: "Yes! We offer same-day repair services across Mohali, Chandigarh, and Punjab. If your AC breaks down unexpectedly, you can call us directly or use our WhatsApp line to schedule an emergency technician.",
   },
   {
     question: "Are your technicians certified, and do you use genuine parts?",

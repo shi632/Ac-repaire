@@ -15,6 +15,7 @@ interface ServiceCardProps {
   features: Feature[]
   color: string
   bgColor: string
+  price: string
   onBook: (title: string) => void
 }
 
@@ -25,6 +26,7 @@ export default function ServiceCard({
   features,
   color,
   bgColor,
+  price,
   onBook,
 }: ServiceCardProps) {
   return (
@@ -37,9 +39,15 @@ export default function ServiceCard({
       <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${color} opacity-[0.03] rounded-bl-full group-hover:scale-150 transition-transform duration-500`} />
 
       <div>
-        {/* Icon Block */}
-        <div className={`w-16 h-16 rounded-2xl ${bgColor} flex items-center justify-center mb-6 shadow-inner group-hover:scale-110 transition-transform duration-300 relative`}>
-          <Icon className={`w-8 h-8 bg-gradient-to-r ${color} bg-clip-text text-blue-600`} />
+        {/* Icon Block & Price */}
+        <div className="flex justify-between items-start mb-6">
+          <div className={`w-16 h-16 rounded-2xl ${bgColor} flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300 relative`}>
+            <Icon className={`w-8 h-8 bg-gradient-to-r ${color} bg-clip-text text-blue-600`} />
+          </div>
+          <div className="text-right bg-slate-50/80 dark:bg-slate-900/80 px-3.5 py-1.5 rounded-2xl border border-slate-100/50 dark:border-slate-800/50">
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest block">Starts From</span>
+            <span className="text-lg font-black text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">{price}</span>
+          </div>
         </div>
 
         {/* Header content */}

@@ -108,13 +108,31 @@ export default function Footer() {
 
       {/* Bottom Bar */}
       <div className="border-t border-slate-900/60 bg-slate-950">
-        <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-slate-500 text-center md:text-left">
-            © {currentYear} {COMPANY_CONFIG.name}. All rights reserved.
-          </p>
+        <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <p className="text-xs text-slate-500 text-center md:text-left">
+              © {currentYear} {COMPANY_CONFIG.name}. All rights reserved.
+            </p>
+            <span className="hidden md:inline text-slate-800">|</span>
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span>Created by</span>
+              <span className="text-slate-200 font-bold hover:text-blue-400 transition-colors">Shivam Sharma</span>
+              <span className="text-[10px] text-slate-500 font-medium">India</span>
+              <div className="w-5 h-3.5 border border-slate-800/40 rounded-[2px] overflow-hidden flex flex-col flex-shrink-0 shadow-sm" title="India">
+                <div className="bg-[#FF9933] h-1/3 w-full" />
+                <div className="bg-[#FFFFFF] h-1/3 w-full flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full border-[0.5px] border-[#000080] flex-shrink-0 animate-spin-slow" />
+                </div>
+                <div className="bg-[#128807] h-1/3 w-full" />
+              </div>
+            </div>
+          </div>
           <div className="flex gap-6 text-xs text-slate-500">
             <a href="#" className="hover:text-blue-500 transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-blue-500 transition-colors">Terms of Service</a>
+            <Link href="/admin" className="hover:text-blue-500 transition-colors">Admin Portal</Link>
+            <span className="text-slate-800">|</span>
+            <Link href="/technician" className="hover:text-blue-500 transition-colors">Technician Portal</Link>
           </div>
         </div>
       </div>

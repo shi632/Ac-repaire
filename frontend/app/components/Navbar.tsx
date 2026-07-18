@@ -25,7 +25,7 @@ export default function Navbar() {
     // Load persisted state
     const savedDark = localStorage.getItem("theme-dark") === "true";
     const savedTheme = (localStorage.getItem("theme-color") as ThemeColor) || "default";
-    
+
     setIsDark(savedDark);
     setActiveTheme(savedTheme);
 
@@ -60,7 +60,7 @@ export default function Navbar() {
     setActiveTheme(theme);
     const allThemes: ThemeColor[] = ["theme-emerald", "theme-rose", "theme-cyber"];
     allThemes.forEach((t) => document.documentElement.classList.remove(t));
-    
+
     if (theme !== "default") {
       document.documentElement.classList.add(theme);
       localStorage.setItem("theme-color", theme);
@@ -78,6 +78,7 @@ export default function Navbar() {
     { name: 'Reviews', href: '#reviews' },
     { name: 'Gallery', href: '#gallery' },
     { name: 'Contact', href: '#contact' },
+    { name: 'Track Status', href: '#track-status' },
   ]
 
   return (
@@ -85,32 +86,28 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
           ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50 shadow-md py-3'
           : 'bg-transparent py-5'
-      }`}
+        }`}
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <a href="#home" className="flex items-center gap-3 group">
-            <div className={`p-2.5 rounded-2xl transition-all duration-300 ${
-              isScrolled 
-                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 group-hover:scale-105' 
+            <div className={`p-2.5 rounded-2xl transition-all duration-300 ${isScrolled
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20 group-hover:scale-105'
                 : 'bg-white/10 text-white group-hover:bg-white/20'
-            }`}>
+              }`}>
               <Snowflake className="w-6 h-6 animate-pulse-slow" />
             </div>
             <div className="flex flex-col">
-              <span className={`font-extrabold text-2xl tracking-tight leading-none transition-colors duration-300 ${
-                isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'
-              }`}>
+              <span className={`font-extrabold text-2xl tracking-tight leading-none transition-colors duration-300 ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'
+                }`}>
                 {COMPANY_CONFIG.brandName}
               </span>
-              <span className={`text-[10px] font-bold tracking-widest uppercase mt-0.5 transition-colors duration-300 ${
-                isScrolled ? 'text-blue-600 dark:text-blue-400' : 'text-blue-200'
-              }`}>
+              <span className={`text-[10px] font-bold tracking-widest uppercase mt-0.5 transition-colors duration-300 ${isScrolled ? 'text-blue-600 dark:text-blue-400' : 'text-blue-200'
+                }`}>
                 AC SERVICES
               </span>
             </div>
@@ -122,11 +119,10 @@ export default function Navbar() {
               <a
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group py-2 ${
-                  isScrolled 
-                    ? 'text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400' 
+                className={`text-sm font-semibold tracking-wide transition-all duration-300 relative group py-2 ${isScrolled
+                    ? 'text-slate-700 hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400'
                     : 'text-white/90 hover:text-white'
-                }`}
+                  }`}
               >
                 {link.name}
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full" />
@@ -141,11 +137,10 @@ export default function Navbar() {
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className={`p-2.5 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border ${
-                  isScrolled
+                className={`p-2.5 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border ${isScrolled
                     ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 border-transparent dark:text-amber-400'
                     : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
-                }`}
+                  }`}
                 title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
               >
                 {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
@@ -154,11 +149,10 @@ export default function Navbar() {
               {/* Theme Palette Toggle */}
               <button
                 onClick={() => setIsThemeOpen(!isThemeOpen)}
-                className={`p-2.5 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border ${
-                  isScrolled
+                className={`p-2.5 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer border ${isScrolled
                     ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800 border-transparent dark:text-slate-200'
                     : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
-                }`}
+                  }`}
                 title="Select Theme Color"
               >
                 <Palette className="w-4.5 h-4.5" />
@@ -197,11 +191,10 @@ export default function Navbar() {
 
             <a
               href={`tel:${COMPANY_CONFIG.phoneRaw}`}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-sm transition-all duration-300 shadow-md hover:scale-105 active:scale-[0.98] ${
-                isScrolled
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-sm transition-all duration-300 shadow-md hover:scale-105 active:scale-[0.98] ${isScrolled
                   ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-blue-500/10'
                   : 'bg-white text-blue-700 hover:bg-slate-50 shadow-black/10'
-              }`}
+                }`}
             >
               <Phone className="w-4 h-4" />
               <span>Call Now</span>
@@ -211,11 +204,10 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-xl transition-colors ${
-              isScrolled 
-                ? 'text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900' 
+            className={`lg:hidden p-2 rounded-xl transition-colors ${isScrolled
+                ? 'text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
                 : 'text-white hover:bg-white/10'
-            }`}
+              }`}
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -237,7 +229,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => {
-                    e.preventDefault(); 
+                    e.preventDefault();
                     setIsMobileMenuOpen(false);
                     setTimeout(() => {
                       const section = document.querySelector(link.href);

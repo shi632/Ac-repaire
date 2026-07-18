@@ -8,42 +8,42 @@ import { COMPANY_CONFIG } from '../config/constants'
 const testimonials = [
   {
     name: 'Rajesh Kumar',
-    location: 'Belapur',
+    location: 'Sector 70, Mohali',
     rating: 5,
     text: 'Excellent service! The technician arrived on time and fixed my split AC cooling issue within an hour. Very professional and affordable pricing. Highly recommended!',
     service: 'AC Repair',
   },
   {
     name: 'Priya Sharma',
-    location: 'Seawoods',
+    location: 'Sector 35, Chandigarh',
     rating: 5,
     text: 'Got my new AC installed by CoolAir team. They did a fantastic job with proper installation and cleanup. The team was very courteous and knowledgeable.',
     service: 'AC Installation',
   },
   {
     name: 'Amit Patel',
-    location: 'Kharghar',
+    location: 'Sector 62, Mohali',
     rating: 5,
     text: 'Regular maintenance service was thorough and detailed. My AC is running like new now. Will definitely use their services again for annual maintenance.',
     service: 'AC Maintenance',
   },
   {
     name: 'Sunita Verma',
-    location: 'Vashi',
+    location: 'Sector 22, Chandigarh',
     rating: 5,
     text: 'Had a gas leakage issue in my AC. They detected the problem quickly and refilled the gas with genuine refrigerant. Very satisfied with the service quality.',
     service: 'Gas Filling',
   },
   {
     name: 'Vikram Singh',
-    location: 'Nerul',
+    location: 'Phase 3B2, Mohali',
     rating: 5,
     text: 'Called them for emergency AC repair at midnight. They responded quickly and fixed the issue. Truly 24/7 service as promised. Great job!',
     service: 'Emergency Repair',
   },
   {
     name: 'Neha Gupta',
-    location: 'Koparkhairane',
+    location: 'Sector 15, Chandigarh',
     rating: 5,
     text: 'Very professional team. They uninstalled my AC safely and reinstalled it at my new apartment without any damage. Reasonable charges too.',
     service: 'AC Shifting',
@@ -71,7 +71,7 @@ export default function Testimonials() {
             What Our <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">Customers</span> Say
           </h2>
           <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-            Read real-world testimonials from our happy residential and commercial clients across Navi Mumbai.
+            Read real-world testimonials from our happy residential and commercial clients across Mohali & Chandigarh.
           </p>
         </motion.div>
 
