@@ -6,7 +6,7 @@ import { useRef, useState, useEffect } from "react";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertTriangle, Loader2, X } from "lucide-react";
 import { COMPANY_CONFIG } from "../config/constants";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = "";
 
 const SERVICE_PRICES: { [key: string]: number } = {
   "AC Repair Service": 349,
