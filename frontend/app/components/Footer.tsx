@@ -109,12 +109,12 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-slate-900/60 bg-slate-950">
         <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
-            <p className="text-xs text-slate-500 text-center md:text-left">
+          <div className="flex flex-row flex-wrap items-center justify-center gap-2 text-xs">
+            <p className="text-slate-500">
               © {currentYear} {COMPANY_CONFIG.name}. All rights reserved.
             </p>
-            <span className="hidden md:inline text-slate-800">|</span>
-            <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span className="text-slate-800">|</span>
+            <div className="flex items-center gap-1.5 text-slate-400">
               <span>Created by</span>
               <span className="text-slate-200 font-bold hover:text-blue-400 transition-colors">Shivam Sharma</span>
               <span className="text-[10px] text-slate-500 font-medium">India</span>

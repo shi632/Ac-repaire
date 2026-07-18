@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, Loader2, Calendar, MapPin, Phone, Star, ShieldCheck, CheckCircle2, AlertCircle, Clock, CreditCard, ChevronRight, X, ArrowLeft, AlertTriangle } from "lucide-react";
 import { COMPANY_CONFIG } from "../config/constants";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = "";
 
 interface Booking {
   id: number;

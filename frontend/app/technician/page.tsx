@@ -116,7 +116,7 @@ export default function TechnicianPortal() {
   // SOS state
   const [sosActive, setSosActive] = useState(false);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const API_URL = "";
 
   // Pin database mappings based on first 5 digits of phones
   const TECH_PINS: { [key: number]: string } = {
@@ -368,13 +368,19 @@ export default function TechnicianPortal() {
     setHasSigned(false);
   };
 
-  // Mock Photo capture uploads
-  const simulatePhotoUpload = (type: "before" | "after") => {
-    if (type === "before") {
-      setBeforePhoto("/images/about.png");
-    } else {
-      setAfterPhoto("/images/about.png");
-    }
+  // Real Photo selection & conversion to Base64
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>, type: "before" | "after") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (type === "before") {
+        setBeforePhoto(reader.result as string);
+      } else {
+        setAfterPhoto(reader.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Part scanning simulation
@@ -830,19 +836,22 @@ export default function TechnicianPortal() {
                             ))}
                           </div>
 
-                          {/* Photos upload mock */}
+                          {/* Before / After Verification Photos */}
                           <div className="border-t border-slate-900 pt-4 space-y-3">
                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest block">Before / After Verification Photos</span>
                             
                             <div className="grid grid-cols-2 gap-3 text-center">
                               <div className="space-y-2">
-                                <button
-                                  type="button"
-                                  onClick={() => simulatePhotoUpload("before")}
-                                  className="w-full py-2.5 border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950 text-slate-400 hover:text-slate-200 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Camera className="w-3.5 h-3.5" /> Upload Before
-                                </button>
+                                <label className="w-full py-2.5 border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950 text-slate-400 hover:text-slate-200 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer">
+                                  <Camera className="w-3.5 h-3.5" />
+                                  <span>Upload Before</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handlePhotoSelect(e, "before")}
+                                  />
+                                </label>
                                 {beforePhoto && (
                                   <div className="relative w-12 h-12 border border-slate-805 rounded-lg mx-auto overflow-hidden">
                                     <img src={beforePhoto} className="w-full h-full object-cover" />
@@ -851,13 +860,16 @@ export default function TechnicianPortal() {
                               </div>
 
                               <div className="space-y-2">
-                                <button
-                                  type="button"
-                                  onClick={() => simulatePhotoUpload("after")}
-                                  className="w-full py-2.5 border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950 text-slate-400 hover:text-slate-200 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer"
-                                >
-                                  <Camera className="w-3.5 h-3.5" /> Upload After
-                                </button>
+                                <label className="w-full py-2.5 border border-dashed border-slate-800 hover:border-slate-700 bg-slate-950 text-slate-400 hover:text-slate-200 rounded-xl text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer">
+                                  <Camera className="w-3.5 h-3.5" />
+                                  <span>Upload After</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handlePhotoSelect(e, "after")}
+                                  />
+                                </label>
                                 {afterPhoto && (
                                   <div className="relative w-12 h-12 border border-slate-850 rounded-lg mx-auto overflow-hidden">
                                     <img src={afterPhoto} className="w-full h-full object-cover" />

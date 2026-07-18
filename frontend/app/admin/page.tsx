@@ -163,7 +163,7 @@ export default function AdminDashboard() {
   const [activeMapBooking, setActiveMapBooking] = useState<Booking | null>(null);
   const [refundProcessingId, setRefundProcessingId] = useState<number | null>(null);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const API_URL = "";
 
   // Check role-based tab restrictions and redirect if needed
   useEffect(() => {
