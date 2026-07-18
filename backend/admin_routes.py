@@ -2,14 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status  # type: ignore
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm  # type: ignore
 from sqlalchemy.orm import Session  # type: ignore
 from datetime import datetime, timedelta
+from typing import List
 from jose import JWTError, jwt  # type: ignore
 import bcrypt  # type: ignore
 import os
 
 from database import get_db
-from models import AdminUser
-from schemas import AdminLogin, Token
-from crud import get_bookings, update_booking_status, delete_booking
+from models import AdminUser, Technician, Coupon, Booking, InventoryItem, Complaint, AuditLog, PricingFactor
+from schemas import AdminLogin, Token, TechnicianResponse, CouponResponse, InventoryItemResponse, ComplaintResponse, AuditLogResponse, PricingFactorResponse
+from crud import get_bookings, update_booking_status, delete_booking, assign_technician, get_audit_logs, get_inventory_items, update_inventory_stock, create_inventory_item, get_complaints, update_complaint_status, get_pricing_factors, update_pricing_factor
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -94,6 +95,18 @@ def update_status(
         raise HTTPException(status_code=404, detail="Booking not found")
     return booking
 
+@router.put("/bookings/{booking_id}/assign")
+def update_technician_assignment(
+    booking_id: int, 
+    technician_id: int,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    booking = assign_technician(db, booking_id, technician_id)
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    return booking
+
 @router.delete("/bookings/{booking_id}")
 def remove_booking(
     booking_id: int,
@@ -105,3 +118,129 @@ def remove_booking(
         raise HTTPException(status_code=404, detail="Booking not found")
     return {"message": "Booking deleted successfully"}
 
+# Technician Management Routes
+@router.get("/technicians")
+def list_technicians(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return db.query(Technician).all()
+
+@router.post("/technicians")
+def create_technician(
+    name: str,
+    phone: str,
+    rating: float = 4.9,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    tech = Technician(name=name, phone=phone, rating=rating)
+    db.add(tech)
+    db.commit()
+    db.refresh(tech)
+    return tech
+
+# Coupon Management Routes
+@router.get("/coupons")
+def list_coupons(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return db.query(Coupon).all()
+
+@router.post("/coupons")
+def create_coupon(
+    code: str,
+    discount_percent: int,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    existing = db.query(Coupon).filter(Coupon.code == code.upper()).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Coupon code already exists")
+    coupon = Coupon(code=code.upper(), discount_percent=discount_percent)
+    db.add(coupon)
+    db.commit()
+    db.refresh(coupon)
+    return coupon
+
+# Audit Logs
+@router.get("/audit-logs", response_model=List[AuditLogResponse])
+def read_audit_logs(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return get_audit_logs(db)
+
+# Inventory Management
+@router.get("/inventory", response_model=List[InventoryItemResponse])
+def read_inventory(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return get_inventory_items(db)
+
+@router.put("/inventory/{item_id}")
+def update_stock(
+    item_id: int,
+    stock_level: int,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    item = update_inventory_stock(db, item_id, stock_level)
+    if not item:
+        raise HTTPException(status_code=404, detail="Inventory item not found")
+    return item
+
+@router.post("/inventory", response_model=InventoryItemResponse)
+def create_item(
+    name: str,
+    stock_level: int,
+    unit_price: int,
+    description: str = None,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return create_inventory_item(db, name, stock_level, unit_price, description)
+
+# Complaints Management
+@router.get("/complaints", response_model=List[ComplaintResponse])
+def read_complaints(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return get_complaints(db)
+
+@router.put("/complaints/{complaint_id}/status")
+def update_complaint(
+    complaint_id: int,
+    status: str,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    comp = update_complaint_status(db, complaint_id, status)
+    if not comp:
+        raise HTTPException(status_code=404, detail="Complaint not found")
+    return comp
+
+# Dynamic Pricing Configuration
+@router.get("/pricing-factors", response_model=List[PricingFactorResponse])
+def read_pricing_factors(
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    return get_pricing_factors(db)
+
+@router.put("/pricing-factors/{factor_id}")
+def update_pricing(
+    factor_id: int,
+    multiplier: float,
+    flat_fee: int,
+    is_active: bool,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    factor = update_pricing_factor(db, factor_id, multiplier, flat_fee, is_active)
+    if not factor:
+        raise HTTPException(status_code=404, detail="Pricing factor not found")
+    return factor
