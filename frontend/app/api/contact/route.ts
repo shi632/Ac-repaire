@@ -13,6 +13,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Phone Validation: must start with '+' and have a country code followed by a 10-digit number
+    const cleanPhone = phone.replace(/[\s\-\(\)]/g, "");
+    const phoneRegex = /^\+\d{1,4}\d{10}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: "Invalid phone number. Must include a country code starting with '+' followed by exactly 10 digits (e.g. +91 93899 82912)." },
+        { status: 400 }
+      );
+    }
+
+    // Email Validation: optional, but if entered, must be valid and contain '@'
+    if (body.email && body.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email.trim())) {
+        return NextResponse.json(
+          { error: "Invalid email address (must contain '@' and a domain, e.g. name@example.com)." },
+          { status: 400 }
+        );
+      }
+    }
+
     // Forward to FastAPI backend
     const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
     

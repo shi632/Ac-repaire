@@ -1,6 +1,7 @@
-from pydantic import BaseModel, Field  # type: ignore
+from pydantic import BaseModel, Field, field_validator  # type: ignore
 from datetime import datetime
 from typing import Optional, List
+import re
 
 class TechnicianResponse(BaseModel):
     id: int
@@ -19,6 +20,14 @@ class BookingBase(BaseModel):
     service: str = Field(..., min_length=2, max_length=100)
     address: str = Field(..., min_length=5)
     message: Optional[str] = None
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone(cls, v: str) -> str:
+        clean_phone = re.sub(r'[\s\-()]', '', v)
+        if not re.match(r'^\+\d{1,4}\d{10}$', clean_phone):
+            raise ValueError("Phone number must include a country code starting with '+' followed by exactly 10 digits (e.g., +91 93899 82912).")
+        return v
 
 class BookingCreate(BookingBase):
     price: Optional[int] = 499

@@ -32,6 +32,7 @@ interface Booking {
 
 export default function TrackingPortal() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+91");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [searchDone, setSearchDone] = useState(false);
@@ -58,8 +59,9 @@ export default function TrackingPortal() {
   // Fetch customer bookings
   const handleSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (phoneNumber.trim().length < 5) {
-      setErrorMsg("Please enter a valid phone number.");
+    const cleanPhone = phoneNumber.replace(/[\s\-\(\)]/g, "");
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      setErrorMsg("Please enter a valid 10-digit phone number.");
       return;
     }
 
@@ -69,8 +71,10 @@ export default function TrackingPortal() {
     setSelectedBooking(null);
     setComplaintSuccess(false);
 
+    const fullPhone = `${countryCode}${cleanPhone}`;
+
     try {
-      const res = await fetch(`${API_URL}/api/bookings/track/${phoneNumber.trim()}`);
+      const res = await fetch(`${API_URL}/api/bookings/track/${fullPhone}`);
       if (!res.ok) {
         throw new Error("Unable to search bookings at this time.");
       }
@@ -225,14 +229,25 @@ export default function TrackingPortal() {
         <div className="max-w-md mx-auto mb-12">
           <form onSubmit={handleSearch} className="flex gap-3 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
             <div className="flex-grow flex items-center pl-3 gap-2">
-              <Search className="w-5 h-5 text-slate-400" />
+              <Search className="w-5 h-5 text-slate-400 flex-shrink-0" />
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="bg-transparent border-none outline-none text-sm text-slate-800 cursor-pointer font-bold pr-1 border-r border-slate-200"
+              >
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+61">🇦🇺 +61</option>
+              </select>
               <input
                 type="tel"
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Enter booking phone number"
-                className="w-full bg-transparent border-none outline-none text-sm text-slate-800 placeholder-slate-400"
+                placeholder="10-digit phone number"
+                className="w-full bg-transparent border-none outline-none text-sm text-slate-800 placeholder-slate-400 pl-1"
               />
             </div>
             <button

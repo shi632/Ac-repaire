@@ -27,6 +27,7 @@ export default function Contact() {
     address: "",
     message: "",
   });
+  const [countryCode, setCountryCode] = useState("+91");
   
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -174,11 +175,26 @@ export default function Contact() {
       setLoading(false);
       return;
     }
-    if (formData.phone.trim().length < 5) {
-      setErrorMsg("Please enter a valid phone number.");
+
+    // Phone Validation: must be exactly 10 digits
+    const cleanPhone = formData.phone.replace(/[\s\-\(\)]/g, "");
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(cleanPhone)) {
+      setErrorMsg("Please enter a valid 10-digit phone number (e.g. 98765 43210).");
       setLoading(false);
       return;
     }
+
+    // Email Validation: optional, but if entered, must be valid and contain '@'
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email.trim())) {
+        setErrorMsg("Please enter a valid email address (must contain '@' and a domain, e.g. name@example.com).");
+        setLoading(false);
+        return;
+      }
+    }
+
     if (formData.address.trim().length < 5) {
       setErrorMsg("Please enter a complete service address (at least 5 characters).");
       setLoading(false);
@@ -204,6 +220,7 @@ export default function Contact() {
 
     const payload = {
       ...formData,
+      phone: `${countryCode}${cleanPhone}`,
       price: finalPrice,
       coupon_code: couponSuccess ? couponCode.toUpperCase() : null,
       discount_applied: discountApplied,
@@ -423,14 +440,27 @@ export default function Contact() {
                       <label className="block text-[10px] font-bold text-slate-550 uppercase mb-1.5">
                         Phone Number *
                       </label>
-                      <input
-                        type="tel"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="w-full px-3 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900"
-                        placeholder="Enter mobile number"
-                      />
+                      <div className="flex gap-2">
+                        <select
+                          value={countryCode}
+                          onChange={(e) => setCountryCode(e.target.value)}
+                          className="px-2.5 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900 cursor-pointer font-bold"
+                        >
+                          <option value="+91">🇮🇳 +91</option>
+                          <option value="+1">🇺🇸 +1</option>
+                          <option value="+44">🇬🇧 +44</option>
+                          <option value="+971">🇦🇪 +971</option>
+                          <option value="+61">🇦🇺 +61</option>
+                        </select>
+                        <input
+                          type="tel"
+                          required
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          className="flex-grow px-3 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900"
+                          placeholder="98765 43210"
+                        />
+                      </div>
                     </div>
                   </div>
 

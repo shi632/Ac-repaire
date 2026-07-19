@@ -19,8 +19,9 @@ from crud import create_booking
 from sqlalchemy import text # type: ignore
 try:
     with engine.connect() as conn:
-        # Check if the newer attendance_logs table exists to verify DB matches new model tables
+        # Check if the newer attendance_logs table exists and bookings has before_photo to verify DB matches new model tables
         conn.execute(text("SELECT id FROM attendance_logs LIMIT 1"))
+        conn.execute(text("SELECT before_photo FROM bookings LIMIT 1"))
 except Exception:
     print("Database schema mismatch detected. Recreating database tables...")
     try:

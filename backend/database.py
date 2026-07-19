@@ -10,6 +10,10 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ac_repair.db")
 
+# Convert postgres:// to postgresql:// for SQLAlchemy compatibility (Heroku/Render DB URLs)
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # Ensure database directory exists if using SQLite
 if DATABASE_URL.startswith("sqlite:///"):
     db_path = DATABASE_URL.replace("sqlite:///", "")
