@@ -2,13 +2,36 @@ from sqlalchemy import create_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
 import os
+import shutil
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ac_repair.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    # Use a directory in the user's home folder to avoid OneDrive syncing lock issues
+    home_dir = os.path.expanduser("~")
+    db_dir = os.path.join(home_dir, ".ac_repair_business")
+    os.makedirs(db_dir, exist_ok=True)
+    db_path = os.path.join(db_dir, "ac_repair.db")
+    
+    # If the new database doesn't exist, check for an existing local one to migrate
+    if not os.path.exists(db_path):
+        possible_old_paths = ["ac_repair.db", "backend/ac_repair.db", "../backend/ac_repair.db"]
+        for old_path in possible_old_paths:
+            if os.path.exists(old_path) and os.path.isfile(old_path):
+                try:
+                    shutil.copy2(old_path, db_path)
+                    print(f"Migrated database from {old_path} to {db_path}")
+                    break
+                except Exception as e:
+                    print(f"Could not migrate existing database: {e}")
+                    
+    # Replace backslashes with forward slashes for SQLite URL compatibility on Windows
+    db_path_formatted = db_path.replace("\\", "/")
+    DATABASE_URL = f"sqlite:///{db_path_formatted}"
 
 # Convert postgres:// to postgresql:// for SQLAlchemy compatibility (Heroku/Render DB URLs)
 if DATABASE_URL.startswith("postgres://"):
