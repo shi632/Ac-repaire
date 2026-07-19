@@ -321,8 +321,16 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchBookings();
         fetchAuditLogs();
+        if (selectedBooking && selectedBooking.id === bookingId) {
+          setSelectedBooking((prev) => prev ? { ...prev, status } : null);
+        }
+      } else {
+        const data = await res.json();
+        alert(`Failed to update booking status: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error updating booking status: ${err.message || err}`);
+    }
     setUpdatingId(null);
   };
 
@@ -335,8 +343,16 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchBookings();
         fetchAuditLogs();
+        if (selectedBooking && selectedBooking.id === bookingId) {
+          setSelectedBooking((prev) => prev ? { ...prev, payment_status: nextStatus } : null);
+        }
+      } else {
+        const data = await res.json();
+        alert(`Failed to update payment status: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error updating payment status: ${err.message || err}`);
+    }
   };
 
   const handleAssignTechnician = async (bookingId: number, technicianId: string) => {
@@ -347,10 +363,19 @@ export default function AdminDashboard() {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
+        const updated = await res.json();
         fetchBookings();
         fetchAuditLogs();
+        if (selectedBooking && selectedBooking.id === bookingId) {
+          setSelectedBooking(updated);
+        }
+      } else {
+        const data = await res.json();
+        alert(`Failed to assign technician: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error assigning technician: ${err.message || err}`);
+    }
   };
 
   const handleCreateTechnician = async (e: React.FormEvent) => {
@@ -397,8 +422,13 @@ export default function AdminDashboard() {
         setNewInventory({ name: "", stock: "10", price: "200", desc: "" });
         fetchInventory();
         fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to create inventory item: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error creating inventory item: ${err.message || err}`);
+    }
   };
 
   const handleUpdateStock = async (itemId: number, nextStock: number) => {
@@ -410,8 +440,13 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchInventory();
         fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to update stock: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error updating stock: ${err.message || err}`);
+    }
   };
 
   const handleResolveComplaint = async (complaintId: number, nextStatus: string) => {
@@ -423,8 +458,13 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchComplaints();
         fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to update complaint status: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error updating complaint status: ${err.message || err}`);
+    }
   };
 
   const handleApproveRefund = async (bookingId: number) => {
@@ -437,8 +477,13 @@ export default function AdminDashboard() {
         if (res.ok) {
           fetchBookings();
           fetchAuditLogs();
+        } else {
+          const data = await res.json();
+          alert(`Failed to approve refund: ${data.detail || res.statusText}`);
         }
-      } catch (err) {}
+      } catch (err: any) {
+        alert(`Error approving refund: ${err.message || err}`);
+      }
       setRefundProcessingId(null);
     }, 1800);
   };
@@ -452,8 +497,13 @@ export default function AdminDashboard() {
       if (res.ok) {
         fetchPricingFactors();
         fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to update pricing rule: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error updating pricing rule: ${err.message || err}`);
+    }
   };
 
   const handleDeleteBooking = async (bookingId: number) => {
@@ -467,8 +517,13 @@ export default function AdminDashboard() {
         fetchBookings();
         fetchAuditLogs();
         setSelectedBooking(null);
+      } else {
+        const data = await res.json();
+        alert(`Failed to delete booking: ${data.detail || res.statusText}`);
       }
-    } catch (err) {}
+    } catch (err: any) {
+      alert(`Error deleting booking: ${err.message || err}`);
+    }
   };
 
   // Mappers and Helpers
