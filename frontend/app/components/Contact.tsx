@@ -436,15 +436,16 @@ export default function Contact() {
                         placeholder="John Doe"
                       />
                     </div>
+
                     <div>
                       <label className="block text-[10px] font-bold text-slate-550 uppercase mb-1.5">
                         Phone Number *
                       </label>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 w-full">
                         <select
                           value={countryCode}
                           onChange={(e) => setCountryCode(e.target.value)}
-                          className="px-2.5 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900 cursor-pointer font-bold"
+                          className="w-24 px-2 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900 cursor-pointer font-bold flex-shrink-0"
                         >
                           <option value="+91">🇮🇳 +91</option>
                           <option value="+1">🇺🇸 +1</option>
@@ -457,7 +458,7 @@ export default function Contact() {
                           required
                           value={formData.phone}
                           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="flex-grow px-3 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900"
+                          className="flex-grow min-w-0 px-3 py-2.5 bg-white rounded-xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all text-xs text-slate-900"
                           placeholder="98765 43210"
                         />
                       </div>
