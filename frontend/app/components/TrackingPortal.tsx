@@ -198,8 +198,8 @@ export default function TrackingPortal() {
     }, 2000);
   };
 
-  const getStatusStep = (status: string) => {
-    switch (status.toLowerCase()) {
+  const getStatusStep = (status?: string | null) => {
+    switch ((status || "").toLowerCase()) {
       case "pending": return 1;
       case "confirmed": return 3;
       case "completed": return 5;

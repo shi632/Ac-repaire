@@ -9,7 +9,7 @@ import os
 
 from database import get_db
 from models import AdminUser, Technician, Coupon, Booking, InventoryItem, Complaint, AuditLog, PricingFactor
-from schemas import AdminLogin, Token, TechnicianResponse, CouponResponse, InventoryItemResponse, ComplaintResponse, AuditLogResponse, PricingFactorResponse
+from schemas import BookingResponse, AdminLogin, Token, TechnicianResponse, CouponResponse, InventoryItemResponse, ComplaintResponse, AuditLogResponse, PricingFactorResponse
 from crud import get_bookings, update_booking_status, delete_booking, assign_technician, get_audit_logs, get_inventory_items, update_inventory_stock, create_inventory_item, get_complaints, update_complaint_status, get_pricing_factors, update_pricing_factor
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -73,7 +73,7 @@ def admin_login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/bookings")
+@router.get("/bookings", response_model=List[BookingResponse])
 def read_bookings(
     skip: int = 0, 
     limit: int = 100, 
@@ -83,7 +83,7 @@ def read_bookings(
 ):
     return get_bookings(db, skip=skip, limit=limit, status=status)
 
-@router.put("/bookings/{booking_id}/status")
+@router.put("/bookings/{booking_id}/status", response_model=BookingResponse)
 def update_status(
     booking_id: int, 
     status: str,
@@ -95,7 +95,7 @@ def update_status(
         raise HTTPException(status_code=404, detail="Booking not found")
     return booking
 
-@router.put("/bookings/{booking_id}/assign")
+@router.put("/bookings/{booking_id}/assign", response_model=BookingResponse)
 def update_technician_assignment(
     booking_id: int, 
     technician_id: int,

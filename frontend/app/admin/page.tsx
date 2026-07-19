@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
@@ -43,7 +43,15 @@ import {
   UserCheck,
   ShieldCheck,
   ArrowLeft,
-  X
+  X,
+  ChevronUp,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Minus,
+  Maximize2,
+  Minimize2
 } from "lucide-react";
 
 interface Technician {
@@ -164,9 +172,16 @@ export default function AdminDashboard() {
   const [activeMapBooking, setActiveMapBooking] = useState<Booking | null>(null);
   const [refundProcessingId, setRefundProcessingId] = useState<number | null>(null);
 
+  // Google Map (Leaflet) Navigation & Control States
+  const [isMapFullScreen, setIsMapFullScreen] = useState(false);
+  const mapRef = useRef<any>(null);
+  const [mapInstance, setMapInstance] = useState<any>(null);
+  const [markersGroup, setMarkersGroup] = useState<any>(null);
+  const [selectedMonthStr, setSelectedMonthStr] = useState<string>("");
   // Technician Edit States
   const [editingTechId, setEditingTechId] = useState<number | null>(null);
   const [editTechData, setEditTechData] = useState({ name: "", phone: "", rating: 4.9, status: "available" });
+  const [expandedTechId, setExpandedTechId] = useState<number | null>(null);
 
   // Booking Edit States
   const [editingBookingId, setEditingBookingId] = useState<number | null>(null);
@@ -604,18 +619,18 @@ export default function AdminDashboard() {
 
   // Mappers and Helpers
   const filteredBookings = bookings.filter((b) => {
-    const statusMatch = filterStatus === "all" || b.status.toLowerCase() === filterStatus.toLowerCase();
+    const statusMatch = filterStatus === "all" || (b.status || "").toLowerCase() === filterStatus.toLowerCase();
     const query = searchTerm.toLowerCase();
     const textMatch =
-      b.name.toLowerCase().includes(query) ||
-      b.phone.includes(query) ||
-      b.service.toLowerCase().includes(query) ||
-      b.address.toLowerCase().includes(query);
+      (b.name || "").toLowerCase().includes(query) ||
+      (b.phone || "").includes(query) ||
+      (b.service || "").toLowerCase().includes(query) ||
+      (b.address || "").toLowerCase().includes(query);
     return statusMatch && textMatch;
   });
 
-  const getStatusBadge = (status: string) => {
-    const normalized = status.toLowerCase();
+  const getStatusBadge = (status?: string | null) => {
+    const normalized = (status || "").toLowerCase();
     if (normalized === "completed") {
       return (
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] uppercase font-bold tracking-wider bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
@@ -638,35 +653,248 @@ export default function AdminDashboard() {
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] uppercase font-bold tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-500 animate-pulse">
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] uppercase font-bold tracking-wider bg-amber-500/10 border border-amber-500/20 text-amber-505 animate-pulse">
         <AlertTriangle className="w-3 h-3" /> Pending
       </span>
     );
   };
 
-  // Get GPS map position based on addresses
-  const getMapPosition = (address: string) => {
-    const text = address.toLowerCase();
-    if (text.includes("35")) return { name: "Sector 35, Chd", x: 75, y: 35, color: "bg-blue-500" };
-    if (text.includes("22")) return { name: "Sector 22, Chd", x: 70, y: 25, color: "bg-cyan-500" };
-    if (text.includes("15")) return { name: "Sector 15, Chd", x: 60, y: 15, color: "bg-indigo-500" };
-    if (text.includes("70")) return { name: "Sector 70, Mohali", x: 25, y: 70, color: "bg-amber-500" };
-    if (text.includes("62")) return { name: "Sector 62, Mohali", x: 35, y: 60, color: "bg-orange-500" };
-    if (text.includes("3b2") || text.includes("phase 3")) return { name: "Phase 3B2, Mohali", x: 45, y: 50, color: "bg-emerald-500" };
+  // Get real geographic coordinates based on address
+  const getGeographicCoords = (address: string) => {
+    const text = (address || "").toLowerCase();
+    if (text.includes("35")) return { name: "Sector 35, Chd", lat: 30.7225, lng: 76.7578, color: "bg-blue-500" };
+    if (text.includes("22")) return { name: "Sector 22, Chd", lat: 30.7325, lng: 76.7685, color: "bg-cyan-500" };
+    if (text.includes("15")) return { name: "Sector 15, Chd", lat: 30.7495, lng: 76.7665, color: "bg-indigo-500" };
+    if (text.includes("70")) return { name: "Sector 70, Mohali", lat: 30.7025, lng: 76.7125, color: "bg-amber-500" };
+    if (text.includes("62")) return { name: "Sector 62, Mohali", lat: 30.7185, lng: 76.7410, color: "bg-orange-500" };
+    if (text.includes("3b2") || text.includes("phase 3")) return { name: "Phase 3B2, Mohali", lat: 30.7120, lng: 76.7285, color: "bg-emerald-500" };
     
-    // Fallback based on text hash
-    const hash = address.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return { name: "Sectors Boundary", x: 40 + (hash % 30), y: 30 + (hash % 40), color: "bg-slate-500" };
+    // Hash fallback inside Chandigarh/Mohali bounding box
+    const hash = (address || "").split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hashLat = 30.71 + (hash % 40) * 0.001;
+    const hashLng = 76.73 + (hash % 30) * 0.001;
+    return { name: "Sectors Boundary", lat: hashLat, lng: hashLng, color: "bg-slate-500" };
   };
+
+  // Initialize Leaflet Map from unpkg CDN
+  const initMap = () => {
+    const L = (window as any).L;
+    if (!L || mapRef.current) return;
+
+    const container = document.getElementById("leaflet-map-container");
+    if (!container) return;
+
+    const map = L.map("leaflet-map-container", {
+      center: [30.725, 76.755],
+      zoom: 13,
+      zoomControl: false
+    });
+
+    // Add Google Maps Tile Layer
+    const googleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0','mt1','mt2','mt3']
+    });
+    googleStreets.addTo(map);
+
+    const group = L.layerGroup().addTo(map);
+    
+    mapRef.current = map;
+    setMapInstance(map);
+    setMarkersGroup(group);
+  };
+
+  // Load Leaflet resources dynamically on client side
+  useEffect(() => {
+    if (typeof window === "undefined" || activeTab !== "live_map") return;
+
+    if ((window as any).L) {
+      setTimeout(initMap, 100);
+      return;
+    }
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(link);
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.onload = () => {
+      setTimeout(initMap, 100);
+    };
+    document.head.appendChild(script);
+  }, [activeTab]);
+
+  // Update Leaflet markers whenever map instance, bookings, or technicians change
+  useEffect(() => {
+    const L = (window as any).L;
+    if (!L || !mapInstance || !markersGroup) return;
+
+    markersGroup.clearLayers();
+
+    // Plot Client Booking Pins
+    bookings.filter(b => b.status !== "cancelled").forEach((b) => {
+      const coords = getGeographicCoords(b.address);
+      
+      const bookingIcon = L.divIcon({
+        className: 'custom-booking-icon',
+        html: `<div class="w-5 h-5 rounded-full border-2 border-slate-950 shadow-lg ${coords.color} flex items-center justify-center animate-pulse"><span class="w-1.5 h-1.5 bg-white rounded-full"></span></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      const marker = L.marker([coords.lat, coords.lng], { icon: bookingIcon })
+        .bindPopup(`
+          <div class="font-sans text-xs text-slate-900 p-1 space-y-1">
+            <h4 class="font-black text-sm text-slate-800">${b.name}</h4>
+            <p class="font-bold text-blue-600">${b.service}</p>
+            <p class="text-[10px] text-slate-500">${b.address}</p>
+            <p class="text-[9px] text-slate-550 capitalize">Status: ${b.status}</p>
+          </div>
+        `);
+      
+      marker.on('click', () => {
+        setActiveMapBooking(b);
+      });
+      
+      markersGroup.addLayer(marker);
+    });
+
+    // Plot Technician Pins
+    technicians.forEach((tech) => {
+      const activeBooking = bookings.find(
+        (b) => b.technician_id === tech.id && ["confirmed", "on_the_way", "arrived", "in_progress"].includes(b.status)
+      );
+      
+      let lat = 30.725;
+      let lng = 76.755;
+      let statusText = "Idle";
+      let pinColor = "bg-emerald-500";
+
+      if (activeBooking) {
+        const bCoords = getGeographicCoords(activeBooking.address || "");
+        lat = bCoords.lat + 0.0012;
+        lng = bCoords.lng - 0.0012;
+        statusText = `On Duty - Booking #${activeBooking.id}`;
+        pinColor = "bg-blue-600";
+      } else {
+        const defaultCoords: { [key: number]: { lat: number; lng: number } } = {
+          1: { lat: 30.7495, lng: 76.7665 },
+          2: { lat: 30.7225, lng: 76.7578 },
+          3: { lat: 30.7025, lng: 76.7125 },
+          4: { lat: 30.7120, lng: 76.7285 },
+        };
+        const coords = defaultCoords[tech.id] || { lat: 30.725, lng: 76.755 };
+        lat = coords.lat;
+        lng = coords.lng;
+      }
+
+      const techIcon = L.divIcon({
+        className: 'custom-tech-icon',
+        html: `
+          <div class="flex flex-col items-center gap-0.5" style="transform: translate(-50%, -50%);">
+            <div class="w-7 h-7 rounded-full border-2 border-slate-900 shadow-md ${pinColor} flex items-center justify-center relative">
+              <span class="font-extrabold text-[8px] text-white">${tech.name.split(" ").map(n => n[0]).join("")}</span>
+              ${tech.status === 'available' ? '<span class="absolute -inset-1 rounded-full border border-emerald-400 animate-ping opacity-45"></span>' : ''}
+            </div>
+            <span class="text-[7px] text-slate-100 font-extrabold bg-slate-950/95 border border-slate-800 rounded px-1.5 py-0.5 whitespace-nowrap shadow-md">${tech.name.split(" ")[0]}</span>
+          </div>
+        `,
+        iconSize: [50, 45],
+        iconAnchor: [0, 0]
+      });
+
+      const marker = L.marker([lat, lng], { icon: techIcon })
+        .bindPopup(`
+          <div class="font-sans text-xs text-slate-900 p-1 space-y-1">
+            <h4 class="font-black text-sm text-slate-800">${tech.name}</h4>
+            <p class="font-bold text-slate-500">Status: ${tech.status}</p>
+            <p class="text-[10px] text-slate-450">${statusText}</p>
+          </div>
+        `);
+      
+      markersGroup.addLayer(marker);
+    });
+
+  }, [mapInstance, bookings, technicians]);
 
   // Booking stats
   const estimatedRevenue = bookings
-    .filter((b) => b.status === "completed" && b.payment_status === "paid")
+    .filter((b) => b.status === "completed" || b.payment_status === "paid")
     .reduce((sum, b) => sum + b.price, 0);
 
   const pendingRefunds = bookings.filter((b) => b.status === "cancelled" && b.payment_status === "paid");
   
   const completedCount = bookings.filter((b) => b.status === "completed").length;
+
+  // Month-wise analytics aggregator
+  const getMonthWiseMetrics = () => {
+    const monthlyData: { [key: string]: { month: string; gross: number; techPay: number; adminNet: number; count: number } } = {};
+
+    bookings.forEach((b) => {
+      if (b.status !== "completed" && b.payment_status !== "paid") return;
+
+      const dateStr = b.created_at || "2026-07-19T00:00:00";
+      const date = new Date(dateStr);
+      const monthYear = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+      
+      let techPay = 0;
+      if (b.status === "completed") {
+        const tech = technicians.find((t) => t.id === b.technician_id);
+        const rating = tech ? tech.rating : 4.5;
+        techPay = 200 + Math.max(0, Math.round((rating - 4.0) * 100));
+      }
+
+      if (!monthlyData[monthYear]) {
+        monthlyData[monthYear] = {
+          month: monthYear,
+          gross: 0,
+          techPay: 0,
+          adminNet: 0,
+          count: 0
+        };
+      }
+
+      monthlyData[monthYear].gross += b.price;
+      monthlyData[monthYear].techPay += techPay;
+      monthlyData[monthYear].adminNet += Math.max(0, b.price - techPay);
+      monthlyData[monthYear].count += 1;
+    });
+
+    return Object.values(monthlyData);
+  };
+
+  // Group detailed bookings for a selected month
+  const getBookingsForMonth = (monthStr: string) => {
+    return bookings
+      .filter((b) => {
+        if (b.status !== "completed" && b.payment_status !== "paid") return false;
+        const dateStr = b.created_at || "2026-07-19T00:00:00";
+        const date = new Date(dateStr);
+        const mStr = date.toLocaleString("en-US", { month: "long", year: "numeric" });
+        return mStr === monthStr;
+      })
+      .map((b) => {
+        const dateStr = b.created_at || "2026-07-19T00:00:00";
+        const date = new Date(dateStr);
+        const formattedDate = date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+        
+        let techPay = 0;
+        if (b.status === "completed") {
+          const tech = technicians.find((t) => t.id === b.technician_id);
+          const rating = tech ? tech.rating : 4.5;
+          techPay = 200 + Math.max(0, Math.round((rating - 4.0) * 100));
+        }
+        
+        return {
+          ...b,
+          dateLabel: formattedDate,
+          adminShare: Math.max(0, b.price - techPay),
+          techShare: techPay
+        };
+      });
+  };
 
   const highlightKeyword = (text: string, query: string) => {
     if (!query.trim()) return text;
@@ -1033,7 +1261,7 @@ export default function AdminDashboard() {
                               <span className={`text-[8px] font-bold px-2 py-0.5 rounded ${
                                 booking.payment_status === "paid" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-amber-500/10 text-amber-500 border border-amber-500/20"
                               }`}>
-                                {booking.payment_status.toUpperCase()}
+                                {(booking.payment_status || "").toUpperCase()}
                               </span>
                               {getStatusBadge(booking.status)}
                             </div>
@@ -1199,7 +1427,7 @@ export default function AdminDashboard() {
                           <div className="space-y-0.5">
                             <span className="text-[9px] text-slate-500 block uppercase font-bold tracking-widest font-sans">Payment / Price Info</span>
                             <div className="flex items-center justify-between bg-slate-950 p-2.5 rounded-xl border border-slate-900">
-                              <span className="text-white font-extrabold text-xs">₹{selectedBooking.price} ({selectedBooking.payment_status.toUpperCase()})</span>
+                              <span className="text-white font-extrabold text-xs">₹{selectedBooking.price} ({(selectedBooking.payment_status || "").toUpperCase()})</span>
                               {["super_admin", "support"].includes(adminRole) && (
                                 <button
                                   onClick={() => handleTogglePayment(selectedBooking.id, selectedBooking.payment_status)}
@@ -1399,40 +1627,123 @@ export default function AdminDashboard() {
               <h3 className="text-base font-extrabold text-white flex items-center gap-2">
                 <Map className="w-5 h-5 text-blue-500" /> Sector-wise Live Booking Board
               </h3>
-              <p className="text-xs text-slate-500 mt-1">Simulated GPS grid detailing booking sectors and coordinate alignments across Chandigarh and Mohali.</p>
+              <p className="text-xs text-slate-500 mt-1">Simulated Google Map detailing booking sectors and coordinate alignments across Chandigarh and Mohali.</p>
             </div>
 
             <div className="grid lg:grid-cols-4 gap-6 items-stretch">
-              {/* The Map Screen (3 cols) */}
-              <div className="lg:col-span-3 bg-slate-950 border border-slate-900 rounded-2xl min-h-[420px] relative overflow-hidden p-4 shadow-inner">
-                {/* SVG Coordinate Grids */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:30px_30px] opacity-35" />
+              {/* The Map Screen (3 cols or Full Screen overlay) */}
+              <div className={`${
+                isMapFullScreen 
+                  ? "fixed inset-4 z-50 bg-slate-950 border-2 border-blue-500 rounded-3xl p-4 shadow-2xl min-h-[420px] overflow-hidden" 
+                  : "lg:col-span-3 bg-slate-950 border border-slate-900 rounded-2xl min-h-[420px] relative overflow-hidden p-4 shadow-inner"
+              } relative`}>
+                
+                {/* Leaflet map container (Natively displays Google Map and locks all pins) */}
+                <div id="leaflet-map-container" className="absolute inset-0 w-full h-full z-0" />
 
-                {/* City Boundary Lines */}
-                <div className="absolute top-[48%] left-0 right-0 border-t border-dashed border-blue-500/20 z-0 flex items-center justify-center">
-                  <span className="bg-slate-950 px-3 text-[9px] text-blue-500/40 uppercase tracking-widest font-black font-sans">Chandigarh &harr; Mohali Border</span>
+                {/* SVG Coordinate Grids overlay */}
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:30px_30px] opacity-10 z-10 pointer-events-none" />
+
+                {/* Navigation and Zoom Controls Overlay */}
+                <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 pointer-events-auto">
+                  {/* Full Screen Toggle Button */}
+                  <button
+                    onClick={() => {
+                      setIsMapFullScreen(prev => !prev);
+                      setTimeout(() => {
+                        if (mapRef.current) mapRef.current.invalidateSize();
+                      }, 300);
+                    }}
+                    className="p-2 bg-slate-900/95 hover:bg-slate-800 border border-slate-700 text-white rounded-xl shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center"
+                    title={isMapFullScreen ? "Exit Full Screen" : "Full Screen Map"}
+                  >
+                    {isMapFullScreen ? <Minimize2 className="w-4.5 h-4.5" /> : <Maximize2 className="w-4.5 h-4.5" />}
+                  </button>
+
+                  {/* Zoom Buttons */}
+                  <div className="flex flex-col border border-slate-700 rounded-xl bg-slate-900/95 overflow-hidden shadow-md">
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.zoomIn();
+                      }}
+                      className="p-2.5 hover:bg-slate-800 text-white transition-all active:scale-95 cursor-pointer border-b border-slate-700 flex items-center justify-center font-bold"
+                      title="Zoom In"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.zoomOut();
+                      }}
+                      className="p-2.5 hover:bg-slate-800 text-white transition-all active:scale-95 cursor-pointer flex items-center justify-center font-bold"
+                      title="Zoom Out"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Plot Pins */}
-                {bookings.filter(b => b.status !== "cancelled").map((b) => {
-                  const pos = getMapPosition(b.address);
-                  return (
+                {/* Pan Navigation Pad Overlay */}
+                <div className="absolute top-4 left-4 z-20 bg-slate-900/95 border border-slate-700 rounded-2xl p-2 shadow-md flex items-center justify-center pointer-events-auto">
+                  <div className="grid grid-cols-3 gap-1 w-20 h-20 relative">
+                    <div />
                     <button
-                      key={b.id}
-                      onClick={() => setActiveMapBooking(b)}
-                      className={`absolute w-4 h-4 rounded-full border-2 border-white cursor-pointer hover:scale-125 z-10 shadow-md ${pos.color} flex items-center justify-center`}
-                      style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-                      title={`${b.name} (${b.service})`}
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.panBy([0, -100]);
+                      }}
+                      className="p-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+                      title="Pan Up"
                     >
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
+                      <ChevronUp className="w-3.5 h-3.5" />
                     </button>
-                  );
-                })}
+                    <div />
 
-                <div className="absolute bottom-4 left-4 z-10 bg-slate-900/80 backdrop-blur-xs border border-slate-800 rounded-xl p-3 text-[10px] space-y-1.5 text-slate-400">
-                  <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Chandigarh Sectors</div>
-                  <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Mohali Sectors</div>
-                  <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Surge / High Demand</div>
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.panBy([-100, 0]);
+                      }}
+                      className="p-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+                      title="Pan Left"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.setView([30.725, 76.755], 13);
+                      }}
+                      className="text-[7px] bg-blue-650 hover:bg-blue-600 text-white rounded-lg font-black flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+                      title="Recenter Map"
+                    >
+                      RESET
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.panBy([100, 0]);
+                      }}
+                      className="p-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+                      title="Pan Right"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    <div />
+                    <button
+                      onClick={() => {
+                        if (mapRef.current) mapRef.current.panBy([0, 100]);
+                      }}
+                      className="p-1 bg-slate-800 hover:bg-slate-700 text-white rounded-lg flex items-center justify-center transition-all active:scale-90 cursor-pointer"
+                      title="Pan Down"
+                    >
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </button>
+                    <div />
+                  </div>
+                </div>
+
+                <div className="absolute bottom-4 left-4 z-20 bg-slate-900/90 backdrop-blur-xs border border-slate-800 rounded-xl p-3 text-[9px] space-y-1.5 text-slate-400">
+                  <div className="flex items-center gap-1.5 font-bold"><span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" /> Active Bookings</div>
+                  <div className="flex items-center gap-1.5 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Available Technician</div>
+                  <div className="flex items-center gap-1.5 font-bold"><span className="w-2.5 h-2.5 rounded-full bg-blue-600" /> Technician On Duty</div>
                 </div>
               </div>
 
@@ -1589,6 +1900,127 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* Month-wise Gross Revenue & Admin Income Split (Two Columns Split) */}
+            <div className="bg-slate-900/30 border border-slate-800 rounded-3xl p-6 shadow-xl text-left space-y-6">
+              <div>
+                <h4 className="text-sm font-extrabold text-white flex items-center gap-1.5">
+                  <TrendingUp className="w-4.5 h-4.5 text-teal-400" /> Month-wise Gross Revenue & Admin Profit Splits
+                </h4>
+                <p className="text-xs text-slate-500 mt-1">Split analytics dividing gross booking value, technician payouts, and Net Admin profit margins.</p>
+              </div>
+
+              <div className="grid lg:grid-cols-5 gap-6 items-stretch">
+                {/* Left Column: Monthly List (2 cols) */}
+                <div className="lg:col-span-2 space-y-3">
+                  <span className="text-[9px] font-bold text-slate-455 uppercase tracking-widest block mb-2">Select Month Summary</span>
+                  {(() => {
+                    const months = getMonthWiseMetrics();
+                    if (months.length === 0) {
+                      return (
+                        <div className="p-6 text-center text-slate-500 border border-dashed border-slate-850 rounded-2xl bg-slate-950/20">
+                          <span className="text-xs">No monthly data logged yet.</span>
+                        </div>
+                      );
+                    }
+
+                    // Auto-select the first month if selectedMonthStr is empty
+                    if (!selectedMonthStr && months.length > 0) {
+                      setSelectedMonthStr(months[0].month);
+                    }
+
+                    return months.map((m) => (
+                      <button
+                        key={m.month}
+                        type="button"
+                        onClick={() => setSelectedMonthStr(m.month)}
+                        className={`w-full p-4 border rounded-2xl text-left flex flex-col justify-between transition-all cursor-pointer ${
+                          selectedMonthStr === m.month
+                            ? "bg-slate-950 border-blue-500 shadow-md shadow-blue-500/5 relative"
+                            : "bg-slate-950/40 border-slate-900 hover:border-slate-800"
+                        }`}
+                      >
+                        {selectedMonthStr === m.month && (
+                          <div className="absolute top-0 left-0 w-1 h-full bg-blue-600 rounded-l-2xl" />
+                        )}
+                        <div className="flex justify-between items-center w-full">
+                          <span className="font-extrabold text-xs text-white">{m.month}</span>
+                          <span className="text-[9px] px-2 py-0.5 bg-blue-600/10 border border-blue-500/20 rounded-full font-bold text-blue-400">{m.count} order(s)</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 mt-4 text-[10px] w-full border-t border-slate-900/60 pt-3">
+                          <div>
+                            <span className="text-slate-500 block text-[8px] uppercase font-bold tracking-wider">Gross Sales</span>
+                            <span className="font-black text-white">₹{m.gross}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 block text-[8px] uppercase font-bold tracking-wider">Tech Pay</span>
+                            <span className="font-bold text-slate-400">₹{m.techPay}</span>
+                          </div>
+                          <div>
+                            <span className="text-slate-500 block text-[8px] uppercase font-bold tracking-wider">Admin Profit</span>
+                            <span className="font-black text-teal-400">₹{m.adminNet}</span>
+                          </div>
+                        </div>
+                      </button>
+                    ));
+                  })()}
+                </div>
+
+                {/* Right Column: Date Side Section / Monthly Booking Details (3 cols) */}
+                <div className="lg:col-span-3 bg-slate-950/80 border border-slate-900 rounded-2xl p-5 flex flex-col justify-between h-full min-h-[300px]">
+                  <div className="space-y-4 flex-grow overflow-y-auto max-h-[360px] pr-2 custom-scrollbar">
+                    <div className="flex justify-between items-center border-b border-slate-900 pb-2">
+                      <span className="text-[9px] font-bold text-slate-455 uppercase tracking-widest">Date Side Section: {selectedMonthStr || "Details"}</span>
+                      <span className="text-[8px] font-medium text-slate-500 uppercase">Gross Payout Allocation</span>
+                    </div>
+
+                    {selectedMonthStr ? (
+                      (() => {
+                        const monthlyBookings = getBookingsForMonth(selectedMonthStr);
+                        if (monthlyBookings.length === 0) {
+                          return (
+                            <div className="py-12 text-center text-slate-655">
+                              <span className="text-xs">No orders registered for this period.</span>
+                            </div>
+                          );
+                        }
+
+                        return monthlyBookings.map((b) => (
+                          <div key={b.id} className="p-3 bg-slate-900/30 border border-slate-900/80 rounded-xl flex items-center justify-between text-xs gap-3">
+                            <div className="flex items-center gap-3">
+                              {/* Date circle */}
+                              <div className="w-10 h-10 bg-slate-900 border border-slate-800 rounded-lg flex flex-col items-center justify-center font-bold text-slate-300 flex-shrink-0">
+                                <span className="text-[10px] line-clamp-1">{b.dateLabel.split(" ")[0]}</span>
+                                <span className="text-[7px] text-slate-550 font-extrabold uppercase">{b.dateLabel.split(" ")[1]}</span>
+                              </div>
+                              <div className="text-left space-y-0.5">
+                                <span className="font-extrabold text-white block">{b.name}</span>
+                                <span className="text-[9px] text-slate-500 font-medium block capitalize">{b.service}</span>
+                              </div>
+                            </div>
+                            <div className="text-right space-y-1">
+                              <div className="flex items-center gap-1.5 justify-end">
+                                <span className="text-[9px] text-slate-500">Gross:</span>
+                                <span className="font-extrabold text-white">₹{b.price}</span>
+                              </div>
+                              <div className="flex items-center gap-1.5 justify-end text-[9px]">
+                                <span className="text-slate-550">Admin Net:</span>
+                                <span className="font-black text-teal-400">₹{b.adminShare}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ));
+                      })()
+                    ) : (
+                      <div className="py-20 text-center text-slate-655 flex flex-col items-center justify-center gap-2">
+                        <Calendar className="w-8 h-8 text-slate-750 animate-pulse" />
+                        <span className="text-xs">Select a month from the left sidebar to display chronological order splits.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Marketing Coupon Analytics */}
             <div className="bg-slate-900/30 border border-slate-800 rounded-3xl p-6 shadow-xl text-left space-y-4">
               <h4 className="text-sm font-extrabold text-white flex items-center gap-1.5">
@@ -1631,7 +2063,13 @@ export default function AdminDashboard() {
                   // Calculate tech metrics
                   const techBookings = bookings.filter(b => b.technician_id === t.id);
                   const completed = techBookings.filter(b => b.status === "completed").length;
-                  const rev = techBookings.filter(b => b.status === "completed" && b.payment_status === "paid").reduce((sum, b) => sum + b.price, 0);
+                  const techEarnings = techBookings
+                    .filter(b => b.status === "completed")
+                    .reduce((sum, b) => {
+                      const basePay = 200;
+                      const ratingIncentive = Math.max(0, Math.round((t.rating - 4.0) * 100));
+                      return sum + basePay + ratingIncentive;
+                    }, 0);
                   
                   if (editingTechId === t.id) {
                     return (
@@ -1771,8 +2209,8 @@ export default function AdminDashboard() {
                           <span className="text-sm font-black text-white mt-0.5 block">{completed} completed</span>
                         </div>
                         <div>
-                          <span className="block font-bold">Rev Generated</span>
-                          <span className="text-sm font-black text-teal-400 mt-0.5 block">₹{rev}</span>
+                          <span className="block font-bold">Income</span>
+                          <span className="text-sm font-black text-teal-400 mt-0.5 block">₹{techEarnings}</span>
                         </div>
                       </div>
 
@@ -1786,6 +2224,46 @@ export default function AdminDashboard() {
                           <Star className="w-3 h-3 fill-amber-500" /> {t.rating} Rating
                         </span>
                       </div>
+
+                      {/* Expandable completed jobs ledger */}
+                      <button
+                        type="button"
+                        onClick={() => setExpandedTechId(expandedTechId === t.id ? null : t.id)}
+                        className="w-full mt-2 py-1.5 bg-slate-900 hover:bg-slate-800 text-[9px] font-bold text-slate-350 hover:text-white rounded-lg border border-slate-850 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                      >
+                        {expandedTechId === t.id ? "Hide Completed Jobs Ledger" : "View Completed Jobs Ledger"}
+                      </button>
+
+                      {expandedTechId === t.id && (
+                        <div className="mt-3 pt-3 border-t border-slate-900 text-left space-y-2.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                          <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Jobs Earnings Ledger</span>
+                          {techBookings.filter(b => b.status === "completed").length === 0 ? (
+                            <p className="text-[10px] text-slate-655 text-center py-2">No completed tickets registered.</p>
+                          ) : (
+                            techBookings.filter(b => b.status === "completed").map((b) => {
+                              const date = b.created_at ? new Date(b.created_at) : new Date();
+                              const formattedDate = date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+                              const techEarning = 200 + Math.max(0, Math.round((t.rating - 4.0) * 100));
+
+                              return (
+                                <div key={b.id} className="p-2.5 bg-slate-950/80 border border-slate-900 rounded-xl flex items-center justify-between text-[10px] gap-2">
+                                  <div className="space-y-0.5">
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="font-extrabold text-white">#{b.id}</span>
+                                      <span className="text-[8px] text-slate-500 font-bold">{formattedDate}</span>
+                                    </div>
+                                    <span className="text-slate-450 block text-[9px] truncate max-w-[120px]">{b.name}</span>
+                                  </div>
+                                  <div className="text-right space-y-0.5">
+                                    <span className="text-slate-400 block font-medium">Order Size: ₹{b.price}</span>
+                                    <span className="text-teal-400 block font-black">Earning: ₹{techEarning}</span>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

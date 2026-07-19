@@ -21,6 +21,13 @@ class BookingBase(BaseModel):
     address: str = Field(..., min_length=5)
     message: Optional[str] = None
 
+class BookingCreate(BookingBase):
+    price: Optional[int] = 499
+    coupon_code: Optional[str] = None
+    discount_applied: Optional[int] = 0
+    payment_status: Optional[str] = "unpaid"
+    technician_id: Optional[int] = None
+
     @field_validator('phone')
     @classmethod
     def validate_phone(cls, v: str) -> str:
@@ -28,13 +35,6 @@ class BookingBase(BaseModel):
         if not re.match(r'^\+\d{1,4}\d{10}$', clean_phone):
             raise ValueError("Phone number must include a country code starting with '+' followed by exactly 10 digits (e.g., +91 93899 82912).")
         return v
-
-class BookingCreate(BookingBase):
-    price: Optional[int] = 499
-    coupon_code: Optional[str] = None
-    discount_applied: Optional[int] = 0
-    payment_status: Optional[str] = "unpaid"
-    technician_id: Optional[int] = None
 
 class BookingResponse(BookingBase):
     id: int

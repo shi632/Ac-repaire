@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+const BACKEND_URL = (process.env.BACKEND_URL || "http://127.0.0.1:8000").replace("localhost", "127.0.0.1");
 
 export async function POST(request: NextRequest) {
   try {
@@ -88,10 +88,25 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     console.error("Error forwarding booking:", error);
-    let errorMessage = error.message || error;
-    if (error.name === "AbortError") {
-      errorMessage = `Connection to backend database server timed out after 6 seconds. Please ensure the backend server is running and accessible at: ${BACKEND_URL}`;
+    
+    let errorMessage = "Unknown error";
+    if (error) {
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        if (error.name === "AbortError") {
+          errorMessage = `Connection to backend database server timed out after 6 seconds. Please ensure the backend server is running and accessible at: ${BACKEND_URL}`;
+        }
+      } else if (typeof error === "object") {
+        try {
+          errorMessage = JSON.stringify(error);
+        } catch (e) {
+          errorMessage = "Non-serializable error object";
+        }
+      } else {
+        errorMessage = String(error);
+      }
     }
+    
     return NextResponse.json(
       { error: "Internal server error: " + errorMessage },
       { status: 500 }

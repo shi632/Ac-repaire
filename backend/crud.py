@@ -43,7 +43,7 @@ def create_booking(db: Session, booking: BookingCreate):
         assigned_tech = random.choice(available_tech)
         booking_data["technician_id"] = assigned_tech.id
         
-    booking_data["status"] = "confirmed"
+    booking_data["status"] = "pending"
     
     db_booking = Booking(**booking_data)
     db.add(db_booking)

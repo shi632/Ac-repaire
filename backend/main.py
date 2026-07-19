@@ -39,16 +39,19 @@ def seed_admin_and_data():
     admin_user = os.getenv("ADMIN_USERNAME", "Shivam")
     admin_password = os.getenv("ADMIN_PASSWORD", "Shivam5001")
     
+    from admin_routes import get_password_hash
+    # Delete legacy default admin user
+    db.query(AdminUser).filter(AdminUser.username == "admin").delete()
+    
     admin = db.query(AdminUser).filter(AdminUser.username == admin_user).first()
     if not admin:
-        from admin_routes import get_password_hash
-        # Delete previous default admin user if it exists
-        db.query(AdminUser).filter(AdminUser.username == "admin").delete()
         admin = AdminUser(
             username=admin_user,
             hashed_password=get_password_hash(admin_password)
         )
         db.add(admin)
+    else:
+        admin.hashed_password = get_password_hash(admin_password)
         
     # 2. Seed Technicians
     techs = [

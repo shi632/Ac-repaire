@@ -447,8 +447,8 @@ export default function TechnicianPortal() {
   };
 
   // Dynamic route planner coordinate path
-  const getSimulatedRoutePath = (address: string) => {
-    const text = address.toLowerCase();
+  const getSimulatedRoutePath = (address?: string | null) => {
+    const text = (address || "").toLowerCase();
     if (text.includes("35")) return "M 35 180 Q 80 120, 160 80";
     if (text.includes("22")) return "M 35 180 Q 100 130, 180 50";
     if (text.includes("70")) return "M 35 180 Q 60 140, 100 120";
