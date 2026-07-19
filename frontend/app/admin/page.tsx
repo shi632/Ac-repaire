@@ -1375,9 +1375,10 @@ export default function AdminDashboard() {
                               )}
                             </div>
                           </div>
-                        </>
-                      )}
-                      </motion.div>
+                        </div>
+                      </>
+                    )}
+                    </motion.div>
                     ) : (
                       <div className="border border-dashed border-slate-850 rounded-3xl p-5 text-center text-slate-500 py-16 bg-slate-900/10">
                         <Eye className="w-8 h-8 mx-auto mb-2 text-slate-700" />
