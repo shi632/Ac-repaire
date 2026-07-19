@@ -56,11 +56,15 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
+      const responseText = await response.text();
+      console.error(`Backend returned status ${response.status}:`, responseText);
       let errorDetail = "Failed to submit booking to database server.";
       try {
-        const errData = await response.json();
+        const errData = JSON.parse(responseText);
         errorDetail = errData.detail || errorDetail;
-      } catch (e) {}
+      } catch (e) {
+        errorDetail = responseText || errorDetail;
+      }
       
       return NextResponse.json(
         { error: errorDetail },
