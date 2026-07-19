@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const BACKEND_URL = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -34,26 +36,33 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Forward to FastAPI backend
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+    // Forward to FastAPI backend with a 6-second timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 6000);
     
-    const response = await fetch(`${backendUrl}/api/bookings`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json' 
-      },
-      body: JSON.stringify({
-        name,
-        phone,
-        service,
-        address,
-        message: message || "",
-        price: body.price,
-        coupon_code: body.coupon_code,
-        discount_applied: body.discount_applied,
-        payment_status: body.payment_status
-      }),
-    });
+    let response;
+    try {
+      response = await fetch(`${BACKEND_URL}/api/bookings`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({
+          name,
+          phone,
+          service,
+          address,
+          message: message || "",
+          price: body.price,
+          coupon_code: body.coupon_code,
+          discount_applied: body.discount_applied,
+          payment_status: body.payment_status
+        }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
       const responseText = await response.text();
@@ -79,8 +88,12 @@ export async function POST(request: NextRequest) {
     );
   } catch (error: any) {
     console.error("Error forwarding booking:", error);
+    let errorMessage = error.message || error;
+    if (error.name === "AbortError") {
+      errorMessage = `Connection to backend database server timed out after 6 seconds. Please ensure the backend server is running and accessible at: ${BACKEND_URL}`;
+    }
     return NextResponse.json(
-      { error: "Internal server error: " + (error.message || error) },
+      { error: "Internal server error: " + errorMessage },
       { status: 500 }
     );
   }
