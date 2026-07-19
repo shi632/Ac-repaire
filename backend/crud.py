@@ -220,3 +220,39 @@ def create_inventory_request(db: Session, technician_id: int, item_id: int, qty:
         log_audit_event(db, tech_name, "Super Admin", f"Scanned & used {qty} unit(s) of '{item.name}' (Stock level updated)")
         return {"success": True, "stock": item.stock_level}
     return {"success": False, "message": "Insufficient stock"}
+
+def update_technician(db: Session, tech_id: int, name: str, phone: str, rating: float, status: str = None):
+    tech = db.query(Technician).filter(Technician.id == tech_id).first()
+    if tech:
+        tech.name = name
+        tech.phone = phone
+        tech.rating = rating
+        if status:
+            tech.status = status
+        db.commit()
+        db.refresh(tech)
+        log_audit_event(db, "Admin", "Super Admin", f"Updated technician info for '{name}' (ID: {tech_id})")
+    return tech
+
+def delete_technician(db: Session, tech_id: int):
+    tech = db.query(Technician).filter(Technician.id == tech_id).first()
+    if tech:
+        db.query(Booking).filter(Booking.technician_id == tech_id).update({Booking.technician_id: None})
+        db.delete(tech)
+        db.commit()
+        log_audit_event(db, "Admin", "Super Admin", f"Deleted technician record '{tech.name}' (ID: {tech_id})")
+    return tech
+
+def update_booking_details(db: Session, booking_id: int, name: str, phone: str, service: str, address: str, price: int, status: str):
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+    if booking:
+        booking.name = name
+        booking.phone = phone
+        booking.service = service
+        booking.address = address
+        booking.price = price
+        booking.status = status
+        db.commit()
+        db.refresh(booking)
+        log_audit_event(db, "Admin", "Super Admin", f"Edited Booking details for #{booking_id} (Client: {name})")
+    return booking

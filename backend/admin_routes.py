@@ -244,3 +244,51 @@ def update_pricing(
     if not factor:
         raise HTTPException(status_code=404, detail="Pricing factor not found")
     return factor
+
+# Technician Management PUT/DELETE
+@router.put("/technicians/{tech_id}")
+def edit_technician(
+    tech_id: int,
+    name: str,
+    phone: str,
+    rating: float,
+    status: str = None,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    from crud import update_technician
+    tech = update_technician(db, tech_id, name, phone, rating, status)
+    if not tech:
+        raise HTTPException(status_code=404, detail="Technician not found")
+    return tech
+
+@router.delete("/technicians/{tech_id}")
+def remove_technician(
+    tech_id: int,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    from crud import delete_technician
+    tech = delete_technician(db, tech_id)
+    if not tech:
+        raise HTTPException(status_code=404, detail="Technician not found")
+    return {"message": "Technician deleted successfully"}
+
+# Booking Edit PUT
+@router.put("/bookings/{booking_id}")
+def edit_booking_details(
+    booking_id: int,
+    name: str,
+    phone: str,
+    service: str,
+    address: str,
+    price: int,
+    status: str,
+    db: Session = Depends(get_db),
+    current_user: AdminUser = Depends(get_current_admin)
+):
+    from crud import update_booking_details
+    booking = update_booking_details(db, booking_id, name, phone, service, address, price, status)
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking not found")
+    return booking

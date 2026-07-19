@@ -12,6 +12,7 @@ import {
   AlertTriangle,
   XCircle,
   Trash2,
+  Edit3,
   Phone,
   MapPin,
   Calendar,
@@ -162,6 +163,21 @@ export default function AdminDashboard() {
   const [newInventory, setNewInventory] = useState({ name: "", stock: "10", price: "200", desc: "" });
   const [activeMapBooking, setActiveMapBooking] = useState<Booking | null>(null);
   const [refundProcessingId, setRefundProcessingId] = useState<number | null>(null);
+
+  // Technician Edit States
+  const [editingTechId, setEditingTechId] = useState<number | null>(null);
+  const [editTechData, setEditTechData] = useState({ name: "", phone: "", rating: 4.9, status: "available" });
+
+  // Booking Edit States
+  const [editingBookingId, setEditingBookingId] = useState<number | null>(null);
+  const [editBookingData, setEditBookingData] = useState({
+    name: "",
+    phone: "",
+    service: "",
+    address: "",
+    price: 499,
+    status: "pending"
+  });
 
   const API_URL = "";
 
@@ -503,6 +519,66 @@ export default function AdminDashboard() {
       }
     } catch (err: any) {
       alert(`Error updating pricing rule: ${err.message || err}`);
+    }
+  };
+
+  const handleEditTechnician = async (techId: number) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/technicians/${techId}?name=${encodeURIComponent(editTechData.name)}&phone=${encodeURIComponent(editTechData.phone)}&rating=${editTechData.rating}&status=${editTechData.status}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setEditingTechId(null);
+        fetchTechnicians();
+        fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to update technician: ${data.detail || res.statusText}`);
+      }
+    } catch (err: any) {
+      alert(`Error updating technician: ${err.message || err}`);
+    }
+  };
+
+  const handleDeleteTechnician = async (techId: number) => {
+    if (!confirm("Delete this technician permanently? This will unassign them from any active bookings.")) return;
+    try {
+      const res = await fetch(`${API_URL}/admin/technicians/${techId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchTechnicians();
+        fetchBookings(); // Refetch bookings since some might have been unassigned
+        fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to delete technician: ${data.detail || res.statusText}`);
+      }
+    } catch (err: any) {
+      alert(`Error deleting technician: ${err.message || err}`);
+    }
+  };
+
+  const handleEditBooking = async (bookingId: number) => {
+    try {
+      const res = await fetch(`${API_URL}/admin/bookings/${bookingId}?name=${encodeURIComponent(editBookingData.name)}&phone=${encodeURIComponent(editBookingData.phone)}&service=${encodeURIComponent(editBookingData.service)}&address=${encodeURIComponent(editBookingData.address)}&price=${editBookingData.price}&status=${editBookingData.status}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setEditingBookingId(null);
+        setSelectedBooking(updated);
+        fetchBookings();
+        fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        alert(`Failed to update booking: ${data.detail || res.statusText}`);
+      }
+    } catch (err: any) {
+      alert(`Error updating booking: ${err.message || err}`);
     }
   };
 
@@ -990,13 +1066,119 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-slate-905 border border-slate-800 rounded-3xl p-5 space-y-4 sticky top-24 shadow-xl text-left"
                       >
-                        <div className="flex justify-between items-start border-b border-slate-800 pb-3">
-                          <div>
-                            <h3 className="text-base font-black text-white">Booking Details</h3>
-                            <span className="text-[9px] text-slate-500 font-bold block mt-0.5">ID: #{selectedBooking.id}</span>
+                        {editingBookingId === selectedBooking.id ? (
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                              <h3 className="text-base font-black text-white">Edit Booking</h3>
+                              <button
+                                onClick={() => setEditingBookingId(null)}
+                                className="text-slate-500 hover:text-white"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                handleEditBooking(selectedBooking.id);
+                              }}
+                              className="space-y-3.5 text-xs text-left"
+                            >
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Customer Name</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={editBookingData.name}
+                                  onChange={(e) => setEditBookingData({ ...editBookingData, name: e.target.value })}
+                                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Contact Phone</label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={editBookingData.phone}
+                                  onChange={(e) => setEditBookingData({ ...editBookingData, phone: e.target.value })}
+                                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none"
+                                />
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Service Type</label>
+                                <select
+                                  value={editBookingData.service}
+                                  onChange={(e) => setEditBookingData({ ...editBookingData, service: e.target.value })}
+                                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none cursor-pointer"
+                                >
+                                  <option value="AC Repair Service">AC Repair Service</option>
+                                  <option value="AC Installation">AC Installation</option>
+                                  <option value="AC Maintenance">AC Maintenance</option>
+                                  <option value="AC Gas Filling">AC Gas Filling</option>
+                                  <option value="AC Uninstallation">AC Uninstallation</option>
+                                </select>
+                              </div>
+                              <div className="space-y-1.5">
+                                <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Service Address</label>
+                                <textarea
+                                  rows={2}
+                                  required
+                                  value={editBookingData.address}
+                                  onChange={(e) => setEditBookingData({ ...editBookingData, address: e.target.value })}
+                                  className="w-full px-3 py-2 bg-slate-955 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none resize-none"
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="space-y-1.5">
+                                  <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Price (₹)</label>
+                                  <input
+                                    type="number"
+                                    required
+                                    value={editBookingData.price}
+                                    onChange={(e) => setEditBookingData({ ...editBookingData, price: parseInt(e.target.value) || 0 })}
+                                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none"
+                                  />
+                                </div>
+                                <div className="space-y-1.5">
+                                  <label className="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">Status</label>
+                                  <select
+                                    value={editBookingData.status}
+                                    onChange={(e) => setEditBookingData({ ...editBookingData, status: e.target.value })}
+                                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 focus:border-blue-500 rounded-xl text-xs text-white outline-none cursor-pointer"
+                                  >
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="flex gap-2 pt-3">
+                                <button
+                                  type="submit"
+                                  className="flex-grow py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all cursor-pointer"
+                                >
+                                  Save Changes
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEditingBookingId(null)}
+                                  className="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded-xl text-xs transition-all cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </form>
                           </div>
-                          {getStatusBadge(selectedBooking.status)}
-                        </div>
+                        ) : (
+                          <>
+                            <div className="flex justify-between items-start border-b border-slate-800 pb-3">
+                              <div>
+                                <h3 className="text-base font-black text-white">Booking Details</h3>
+                                <span className="text-[9px] text-slate-500 font-bold block mt-0.5">ID: #{selectedBooking.id}</span>
+                              </div>
+                              {getStatusBadge(selectedBooking.status)}
+                            </div>
 
                         <div className="space-y-3.5 text-xs">
                           <div className="space-y-0.5">
@@ -1153,6 +1335,25 @@ export default function AdminDashboard() {
                             </div>
 
                             <div className="flex gap-2">
+                              {adminRole === "super_admin" && (
+                                <button
+                                  onClick={() => {
+                                    setEditingBookingId(selectedBooking.id);
+                                    setEditBookingData({
+                                      name: selectedBooking.name,
+                                      phone: selectedBooking.phone,
+                                      service: selectedBooking.service,
+                                      address: selectedBooking.address,
+                                      price: selectedBooking.price,
+                                      status: selectedBooking.status
+                                    });
+                                  }}
+                                  className="flex-grow py-2.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 font-bold rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] cursor-pointer"
+                                >
+                                  Edit details
+                                </button>
+                              )}
+
                               <button
                                 onClick={() => handleCopyDetails(selectedBooking)}
                                 className={`flex-grow py-2.5 border font-bold rounded-lg transition-all flex items-center justify-center gap-1 text-[10px] cursor-pointer ${
@@ -1174,7 +1375,8 @@ export default function AdminDashboard() {
                               )}
                             </div>
                           </div>
-                        </div>
+                        </>
+                      )}
                       </motion.div>
                     ) : (
                       <div className="border border-dashed border-slate-850 rounded-3xl p-5 text-center text-slate-500 py-16 bg-slate-900/10">
@@ -1430,21 +1632,136 @@ export default function AdminDashboard() {
                   const completed = techBookings.filter(b => b.status === "completed").length;
                   const rev = techBookings.filter(b => b.status === "completed" && b.payment_status === "paid").reduce((sum, b) => sum + b.price, 0);
                   
+                  if (editingTechId === t.id) {
+                    return (
+                      <form
+                        key={t.id}
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleEditTechnician(t.id);
+                        }}
+                        className="bg-slate-950 p-5 border border-blue-500/30 rounded-2xl space-y-3.5 flex flex-col justify-between text-left relative overflow-hidden"
+                      >
+                        <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600" />
+                        <div className="flex justify-between items-center">
+                          <h4 className="text-white font-extrabold text-xs uppercase tracking-wider">Edit Tech Info</h4>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTechId(null)}
+                            className="text-slate-500 hover:text-white"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Name</label>
+                          <input
+                            type="text"
+                            required
+                            value={editTechData.name}
+                            onChange={(e) => setEditTechData({ ...editTechData, name: e.target.value })}
+                            className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white outline-none"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Phone</label>
+                          <input
+                            type="text"
+                            required
+                            value={editTechData.phone}
+                            onChange={(e) => setEditTechData({ ...editTechData, phone: e.target.value })}
+                            className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white outline-none"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <label className="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Rating</label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              min="1"
+                              max="5"
+                              required
+                              value={editTechData.rating}
+                              onChange={(e) => setEditTechData({ ...editTechData, rating: parseFloat(e.target.value) || 0.0 })}
+                              className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[8px] font-bold text-slate-500 uppercase tracking-widest block">Status</label>
+                            <select
+                              value={editTechData.status}
+                              onChange={(e) => setEditTechData({ ...editTechData, status: e.target.value })}
+                              className="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white outline-none cursor-pointer"
+                            >
+                              <option value="available">Available</option>
+                              <option value="busy">Busy</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                          <button
+                            type="submit"
+                            className="flex-grow py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-[10px] transition-all cursor-pointer"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingTechId(null)}
+                            className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-lg text-[10px] transition-all cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    );
+                  }
+                  
                   return (
                     <div key={t.id} className="bg-slate-950 p-5 border border-slate-900 rounded-2xl space-y-4 flex flex-col justify-between text-left relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600" />
-                      <div className="flex gap-4 items-center">
-                        <div className="w-12 h-12 bg-blue-600/10 rounded-xl flex items-center justify-center border border-blue-500/20 overflow-hidden">
-                          {t.avatar ? (
-                            <img src={t.avatar} className="w-full h-full object-cover" alt={t.name} />
-                          ) : (
-                            <span className="font-extrabold text-blue-450 text-sm">{t.name.split(" ").map(n => n[0]).join("")}</span>
-                          )}
+                      
+                      <div className="flex gap-4 items-start justify-between">
+                        <div className="flex gap-4 items-center">
+                          <div className="w-12 h-12 bg-blue-600/10 rounded-xl flex items-center justify-center border border-blue-500/20 overflow-hidden">
+                            {t.avatar ? (
+                              <img src={t.avatar} className="w-full h-full object-cover" alt={t.name} />
+                            ) : (
+                              <span className="font-extrabold text-blue-450 text-sm">{t.name.split(" ").map(n => n[0]).join("")}</span>
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="text-white font-extrabold text-sm">{t.name}</h4>
+                            <span className="text-[10px] text-slate-500 font-semibold block mt-0.5">{t.phone}</span>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-white font-extrabold text-sm">{t.name}</h4>
-                          <span className="text-[10px] text-slate-500 font-semibold block mt-0.5">{t.phone}</span>
-                        </div>
+
+                        {adminRole === "super_admin" && (
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => {
+                                setEditingTechId(t.id);
+                                setEditTechData({ name: t.name, phone: t.phone, rating: t.rating, status: t.status });
+                              }}
+                              className="p-1.5 bg-slate-900 hover:bg-blue-950/20 text-slate-500 hover:text-blue-400 border border-slate-850 hover:border-blue-900/30 rounded-lg transition-all cursor-pointer"
+                              title="Edit Technician"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteTechnician(t.id)}
+                              className="p-1.5 bg-slate-900 hover:bg-rose-950/20 text-slate-500 hover:text-rose-450 border border-slate-850 hover:border-rose-900/30 rounded-lg transition-all cursor-pointer"
+                              title="Delete Technician"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 border-t border-b border-slate-900 py-3 text-[10px] text-slate-400">
